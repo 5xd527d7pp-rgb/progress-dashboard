@@ -8,8 +8,11 @@ data/health-data.json
 data/ai-suggestions.json
 data/deployed-url.txt
 data/stock-tracker.json
+data/todo-report-data.json
+data/todo-report-url.txt
 
 output/dashboard.html
+output/todo-report.html
 output/screenshot*.png
 
 dist/

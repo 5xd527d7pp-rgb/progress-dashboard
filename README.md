@@ -374,6 +374,140 @@ npm run post-slack          # ⑦だけ実行
 
 ---
 
+## Todoレポート自動配信（メール向け）
+
+業務ごとのTodo一覧を、毎週月曜8:00に自動配信する専用パイプラインを追加しています。見本レイアウトに近い `output/todo-report.html` を生成し、Surge URLをメールで送信します。
+
+### 入力データ
+
+`data/todo-sources/` の4ファイルを入力ソースとして使います。
+
+- `mail-todos.json`（メール由来）
+- `meeting-log-todos.json`（打合せ記録簿由来）
+- `phone-log-todos.json`（電話連絡由来）
+- `business-events.json`（検討委員会・文化庁協議の実施記録）
+
+電話連絡は自動取得が難しいため、フォーム入力や定型メモ連携で `phone-log-todos.json` に集約する前提です。
+
+フォーム連携時は、CSV出力を `data/todo-sources/raw-phone-log.csv` と同じヘッダー形式にそろえて取り込みます。  
+`TODO_REPORT_PHONE_LOG_CSV_URL` を設定すると、`npm run sync-phone-log` でURLからCSVを自動同期できます（Googleスプレッドシート公開CSV URLなど）。
+
+### ルーティンタスク自動生成
+
+`business-events.json` で会議実施を検知したら、以下を必ず追加します（期限は実施日 + 7日）。
+
+- 議事録作成
+- 指摘事項リスト作成
+
+担当者は `config/todo-report-settings.js` の業務IDごとの固定担当者マスタで自動補完します。
+
+### 実行コマンド
+
+```bash
+npm run run-todo-report
+```
+
+このコマンドは先に `npm run sync-phone-log` と `npm run import-phone-log` を実行し、電話連絡CSVを取り込んでからレポート生成に進みます。
+
+事前チェックだけ実行したい場合:
+
+```bash
+npm run check-todo-report-setup
+```
+
+本番前にローカルで安全確認（メールdry-run / デプロイなし）:
+
+```bash
+npm run run-todo-report:preview
+```
+
+個別実行:
+
+```bash
+npm run sync-phone-log
+npm run import-phone-log
+npm run build-todo-report-data
+npm run generate-todo-report
+npm run deploy-todo-report
+npm run send-todo-report-email
+```
+
+メール送信のドライラン:
+
+```bash
+npm run send-todo-report-email:dry-run
+```
+
+### 必要な環境変数（メール送信）
+
+`.env.example` の「Todoレポート自動配信」ブロックを参照してください。
+
+GitHub Actions では `.github/workflows/run-todo-report.yml` が毎週月曜8:00（JST）に実行されます。
+
+### GitHub Secrets 設定（最短）
+
+GitHub の `Settings -> Secrets and variables -> Actions` で以下を追加してください。
+
+必須（本番配信）:
+
+- `TODO_REPORT_SMTP_HOST`
+- `TODO_REPORT_SMTP_PORT`
+- `TODO_REPORT_SMTP_USER`
+- `TODO_REPORT_SMTP_PASS`
+- `TODO_REPORT_MAIL_FROM`
+- `TODO_REPORT_MAIL_TO`
+
+推奨:
+
+- `TODO_REPORT_PHONE_LOG_CSV_URL`（Googleフォーム回答CSVの公開URL）
+- `TODO_REPORT_SURGE_DOMAIN`
+- `TODO_REPORT_SURGE_LOGIN`
+- `TODO_REPORT_SURGE_TOKEN`
+- `TODO_REPORT_PUBLIC_URL`
+- `TODO_REPORT_FAIL_ON_WARNINGS`（`1` で警告時に失敗）
+
+まずは `Actions -> Todoレポート自動配信 -> Run workflow` で `mode=preview` を実行し、問題なければ `mode=production` で確認する運用が安全です。
+
+### Googleフォーム連携を確実に通す手順
+
+1. Googleフォームの回答先を Googleスプレッドシートに連携  
+2. 回答シートのヘッダーを以下にそろえる（この順推奨）
+   - `businessId,businessName,status,content,submittedAt,responseDueAt,returnAt,clientDueAt`
+3. シートを公開し、CSV URL を作成（`.../export?format=csv&gid=...`）
+4. URLを `TODO_REPORT_PHONE_LOG_CSV_URL` に設定
+5. ローカルで検証:
+
+```bash
+npm run check-phone-log-source
+```
+
+6. 問題なければ preview 実行:
+
+```bash
+npm run run-todo-report:preview
+```
+
+### 連携トラブル時の切り分け
+
+- `CSV取得失敗: 403/404`  
+  - 共有設定（リンクを知っている全員）またはURLの `gid` を確認
+- `CSVヘッダー不足`  
+  - フォーム回答シートの列名を README の必須ヘッダーに合わせる
+- データ行数 0件  
+  - 回答が未入力、または別シートを `gid` で指定している可能性
+
+### データ品質チェック
+
+`build-todo-report-data` 実行時に、以下の期限整合性を自動チェックします。
+
+- 返答期日 <= 客先提出期限
+- 戻し日程 <= 客先提出期限
+- 最終確認提出 <= 客先提出期限
+
+警告がある場合は、HTMLレポートとメール本文に件数/内容が表示されます。
+
+---
+
 ## 困ったときは
 
 つまずいたときは、以下の順で相談してください。
