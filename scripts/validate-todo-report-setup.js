@@ -4,7 +4,6 @@ import 'dotenv/config';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { parseArgs } from 'node:util';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,6 +32,20 @@ const OPTIONAL_ENV_KEYS = [
 
 const REQUIRED_ENV_KEYS_PREVIEW = [];
 
+function getProfileFromArgv() {
+  const argv = process.argv.slice(2);
+  const profileArg = argv.find(arg => arg.startsWith('--profile='));
+  if (!profileArg) {
+    return 'production';
+  }
+  const value = profileArg.split('=')[1] || '';
+  return value === 'preview' ? 'preview' : 'production';
+}
+
+function isStrictMode() {
+  return process.argv.includes('--strict');
+}
+
 async function checkFileExists(relativePath) {
   const filePath = path.join(__dirname, '..', relativePath);
   try {
@@ -44,15 +57,8 @@ async function checkFileExists(relativePath) {
 }
 
 async function validateTodoReportSetup() {
-  const { values } = parseArgs({
-    options: {
-      strict: { type: 'boolean', default: false },
-      profile: { type: 'string', default: 'production' }
-    }
-  });
-
-  const strict = values.strict;
-  const profile = values.profile === 'preview' ? 'preview' : 'production';
+  const strict = isStrictMode();
+  const profile = getProfileFromArgv();
   const errors = [];
   const warnings = [];
   const requiredEnvKeys = profile === 'preview'
