@@ -10,6 +10,78 @@ const __dirname = path.dirname(__filename);
 
 const OUTPUT_PATH = path.join(__dirname, '..', 'data', 'todo-sources', 'raw-phone-log.csv');
 
+const REQUIRED_HEADERS = [
+  'businessId',
+  'businessName',
+  'status',
+  'content',
+  'submittedAt',
+  'responseDueAt',
+  'returnAt',
+  'clientDueAt'
+];
+
+function parseCsvLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    const next = line[i + 1];
+
+    if (char === '"' && inQuotes && next === '"') {
+      current += '"';
+      i += 1;
+      continue;
+    }
+
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+      continue;
+    }
+
+    current += char;
+  }
+
+  result.push(current.trim());
+  return result;
+}
+
+function extractHeaderLine(csvText) {
+  const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
+  if (lines.length === 0) {
+    return '';
+  }
+  return lines[0];
+}
+
+function validateCsvHeaders(csvText) {
+  const headerLine = extractHeaderLine(csvText);
+  if (!headerLine) {
+    return { ok: false, reason: 'CSVが空です' };
+  }
+
+  const firstLineLower = headerLine.toLowerCase();
+  if (firstLineLower.includes('<!doctype html') || firstLineLower.includes('<html')) {
+    return { ok: false, reason: 'HTMLが返ってきました（共有設定/URLが原因の可能性）' };
+  }
+
+  const headers = parseCsvLine(headerLine);
+  const missing = REQUIRED_HEADERS.filter(h => !headers.includes(h));
+  if (missing.length > 0) {
+    return { ok: false, reason: `CSVヘッダー不足: ${missing.join(', ')}` };
+  }
+
+  return { ok: true };
+}
+
 async function fileExists(filePath) {
   try {
     await fs.access(filePath);
@@ -38,6 +110,11 @@ async function syncPhoneLogFromUrl() {
     const csv = await response.text();
     if (!csv.trim()) {
       throw new Error('CSV内容が空です');
+    }
+
+    const validation = validateCsvHeaders(csv);
+    if (!validation.ok) {
+      throw new Error(validation.reason);
     }
 
     await fs.writeFile(OUTPUT_PATH, csv, 'utf-8');
