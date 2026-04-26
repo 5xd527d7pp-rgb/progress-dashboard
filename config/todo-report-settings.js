@@ -8,6 +8,30 @@ export const BUSINESS_ASSIGNEES = {
   '20260141': '中嶋'
 };
 
+// 表記ゆれを既存業務へ寄せるための別名ルール
+export const BUSINESS_NAME_ALIASES = [
+  {
+    keyword: '四條畷市文化財保存活用地域計画策定支援業務委託',
+    businessId: '20260141',
+    businessName: '四條畷市文化財保存活用地域計画策定支援業務委託（２年目）'
+  },
+  {
+    keyword: '日高市文化財保存活用地域計画作成支援業務',
+    businessId: '20260132',
+    businessName: '日高市文化財保存活用地域計画作成支援業務'
+  },
+  {
+    keyword: '史跡坊の塚古墳保存活用計画作成支援業務委託',
+    businessId: '20260139',
+    businessName: '史跡坊の塚古墳保存活用計画作成支援業務委託'
+  },
+  {
+    keyword: '史跡舟木遺跡整備基本計画策定支援業務',
+    businessId: '20260140',
+    businessName: '史跡舟木遺跡整備基本計画策定支援業務（２年目）'
+  }
+];
+
 // 会議イベント後に必ず生成するルーティンタスク
 export const ROUTINE_TASK_TEMPLATES = {
   review_committee: [

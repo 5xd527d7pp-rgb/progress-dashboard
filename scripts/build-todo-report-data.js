@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import {
   BUSINESS_ASSIGNEES,
+  BUSINESS_NAME_ALIASES,
   ROUTINE_SUBMISSION_DEADLINE_DAYS,
   ROUTINE_TASK_TEMPLATES,
   STATUS_LABELS,
@@ -34,6 +35,43 @@ function addDays(baseDate, days) {
   const copied = new Date(baseDate);
   copied.setDate(copied.getDate() + days);
   return copied;
+}
+
+function normalizeNameForMatch(text) {
+  return String(text || '')
+    .normalize('NFKC')
+    .replace(/\s+/g, '')
+    .toLowerCase();
+}
+
+function harmonizeBusinessIdentity(tasks) {
+  return tasks.map(task => {
+    const target = normalizeNameForMatch(`${task.businessName} ${task.content}`);
+    const alias = BUSINESS_NAME_ALIASES.find(item =>
+      target.includes(normalizeNameForMatch(item.keyword))
+    );
+    if (!alias) return task;
+    return {
+      ...task,
+      businessId: alias.businessId,
+      businessName: alias.businessName
+    };
+  });
+}
+
+function harmonizeEventIdentity(events) {
+  return events.map(event => {
+    const target = normalizeNameForMatch(`${event.businessName} ${event.eventName}`);
+    const alias = BUSINESS_NAME_ALIASES.find(item =>
+      target.includes(normalizeNameForMatch(item.keyword))
+    );
+    if (!alias) return event;
+    return {
+      ...event,
+      businessId: alias.businessId,
+      businessName: alias.businessName
+    };
+  });
 }
 
 function normalizeTask(rawTask, sourceType) {
@@ -130,34 +168,19 @@ function dedupeTasks(tasks) {
   return unique;
 }
 
-function stableHash(input) {
-  let hash = 5381;
-  for (let i = 0; i < input.length; i += 1) {
-    hash = ((hash << 5) + hash) + input.charCodeAt(i);
-    hash &= 0x7fffffff;
-  }
-  return hash;
-}
-
 function assignSerialNumbers(tasks) {
   return tasks
     .sort((a, b) => {
       const aDate = toDate(a.responseDueAt)?.getTime() || Number.MAX_SAFE_INTEGER;
       const bDate = toDate(b.responseDueAt)?.getTime() || Number.MAX_SAFE_INTEGER;
       if (aDate !== bDate) return aDate - bDate;
-      return a.businessId.localeCompare(b.businessId);
+      if (a.businessId !== b.businessId) return a.businessId.localeCompare(b.businessId);
+      return a.content.localeCompare(b.content);
     })
-    .map(task => {
-      const key = [
-        task.businessId,
-        task.content,
-        task.responseDueAt || '',
-        task.instructionMethod
-      ].join('|');
-      const serialValue = stableHash(key) % 1000000;
+    .map((task, index) => {
       return {
         ...task,
-        serialNo: `SN-${String(serialValue).padStart(6, '0')}`
+        serialNo: `SN-${String(index + 1).padStart(6, '0')}`
       };
     });
 }
@@ -299,7 +322,7 @@ async function buildTodoReportData() {
   ]);
 
   const phoneOnly = isPhoneOnlyTodoReport();
-  const eventItems = phoneOnly ? [] : (eventData.items || []);
+  const eventItems = phoneOnly ? [] : harmonizeEventIdentity(eventData.items || []);
 
   const rawTasks = phoneOnly
     ? [...(phoneData.items || []).map(item => normalizeTask(item, 'phone'))].filter(Boolean)
@@ -310,7 +333,8 @@ async function buildTodoReportData() {
     ].filter(Boolean);
 
   const routineTasks = phoneOnly ? [] : buildRoutineTasks(eventItems);
-  const mergedTasks = dedupeTasks([...rawTasks, ...routineTasks]);
+  const harmonizedTasks = harmonizeBusinessIdentity([...rawTasks, ...routineTasks]);
+  const mergedTasks = dedupeTasks(harmonizedTasks);
   const tasksWithSerial = assignSerialNumbers(mergedTasks);
   const validationWarnings = validateTasks(tasksWithSerial);
   const businesses = buildBusinessSummaries(tasksWithSerial, eventItems);

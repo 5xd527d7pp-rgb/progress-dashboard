@@ -378,6 +378,8 @@ npm run post-slack          # ⑦だけ実行
 
 業務ごとのTodo一覧を、毎週月曜8:00に自動配信する専用パイプラインを追加しています。見本レイアウトに近い `output/todo-report.html` を生成し、Surge URLをメールで送信します。
 
+仕組みと運用フローの図解: [`docs/todo-automation-diagram.html`](docs/todo-automation-diagram.html)
+
 ### 入力データ
 
 `data/todo-sources/` の4ファイルを入力ソースとして使います。

@@ -11,9 +11,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 function formatDateTime(value) {
-  if (!value) return '-';
+  if (!value) return '要確認';
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '-';
+  if (Number.isNaN(date.getTime())) return '要確認';
   return date.toLocaleString('ja-JP', {
     timeZone: REPORT_TIMEZONE,
     month: '2-digit',
@@ -25,9 +25,9 @@ function formatDateTime(value) {
 }
 
 function formatDate(value) {
-  if (!value) return '-';
+  if (!value) return '要確認';
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '-';
+  if (Number.isNaN(date.getTime())) return '要確認';
   return date.toLocaleDateString('ja-JP', {
     timeZone: REPORT_TIMEZONE,
     month: 'long',
@@ -141,7 +141,7 @@ function renderBusinessBlock(business) {
         <td>${escapeHtml(task.serialNo)}</td>
         <td>${escapeHtml(task.status)}</td>
         <td>${escapeHtml(task.assignee)}</td>
-        <td>${escapeHtml(task.content)}</td>
+        <td class="content-cell">${escapeHtml(task.content)}</td>
         <td>${escapeHtml(task.instructionMethod)}</td>
         <td>${escapeHtml(formatDateTime(task.submittedAt))}</td>
         <td>${escapeHtml(formatDateTime(task.responseDueAt))}</td>
@@ -210,11 +210,13 @@ async function generateTodoReport() {
       <tr class="${isCompletedStatus(task.status) ? 'task-completed' : ''}">
         <td>${escapeHtml(task.serialNo)}</td>
         <td>${escapeHtml(task.status)}</td>
-        <td>${escapeHtml(task.businessId)} / ${escapeHtml(task.businessName)}</td>
-        <td>${escapeHtml(task.content)}</td>
         <td>${escapeHtml(task.assignee)}</td>
+        <td class="content-cell">${escapeHtml(task.content)}</td>
+        <td>${escapeHtml(task.instructionMethod)}</td>
         <td>${escapeHtml(formatDateTime(task.submittedAt))}</td>
         <td>${escapeHtml(formatDateTime(task.responseDueAt))}</td>
+        <td>${escapeHtml(formatDateTime(task.returnAt))}</td>
+        <td>${escapeHtml(formatDateTime(task.clientDueAt))}</td>
       </tr>
   `).join('');
 
@@ -238,6 +240,13 @@ async function generateTodoReport() {
     .card { background: #fff; border: 1px solid #d0d7de; border-radius: 8px; padding: 16px; margin: 16px 0; overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th, td { border: 1px solid #d8dee4; padding: 8px; text-align: left; white-space: nowrap; }
+    .content-cell {
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      min-width: 300px;
+      max-width: 520px;
+    }
     th { background: #f6f8fa; }
     ul { margin-top: 0; }
     .footer-note { color: #59636e; font-size: 13px; }
@@ -276,17 +285,19 @@ async function generateTodoReport() {
 
     <section class="card">
       <h2>シリアルナンバー管理台帳</h2>
-      <p class="meta">返答期日が近い順に表示</p>
+      <p class="meta">返答期日が近い順に表示（列構成は業務タスク表と同一）</p>
       <table>
         <thead>
           <tr>
             <th>シリアルNo</th>
             <th>状態</th>
-            <th>業務ID / 業務名</th>
-            <th>作業内容</th>
-            <th>担当者</th>
+            <th>担当者（誰が）</th>
+            <th>内容（なにを）</th>
+            <th>指示方法</th>
             <th>最終確認者へ提出</th>
             <th>返答期日</th>
+            <th>戻し日程</th>
+            <th>客先提出期限</th>
           </tr>
         </thead>
         <tbody>
