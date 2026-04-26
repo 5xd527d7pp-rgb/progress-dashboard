@@ -21,10 +21,11 @@
     "import-phone-log": "node scripts/import-phone-log-csv.js",
     "generate-todo-report": "node scripts/generate-todo-report.js",
     "deploy-todo-report": "node scripts/deploy-todo-report.js",
+    "publish-todo-report-html": "npm run sync-phone-log && npm run import-phone-log && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report",
     "send-todo-report-email": "node scripts/send-todo-report-email.js",
     "send-todo-report-email:dry-run": "DRY_RUN=1 node scripts/send-todo-report-email.js",
     "run-todo-report": "npm run check-todo-report-setup && npm run sync-phone-log && npm run import-phone-log && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report && npm run send-todo-report-email",
-    "run-todo-report:preview": "npm run check-todo-report-setup:preview && npm run sync-phone-log && npm run import-phone-log && npm run build-todo-report-data && npm run generate-todo-report && npm run send-todo-report-email:dry-run"
+    "run-todo-report:preview": "npm run check-todo-report-setup:preview && npm run sync-phone-log && npm run import-phone-log && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report && npm run send-todo-report-email:dry-run"
   },
   "keywords": [
     "dashboard",

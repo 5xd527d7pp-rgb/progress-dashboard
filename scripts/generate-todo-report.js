@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { REPORT_TIMEZONE } from '../config/todo-report-settings.js';
+import { isPhoneOnlyTodoReport } from './todo-report-source-mode.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,6 +44,80 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function sortTasksByResponseDue(tasks) {
+  return [...tasks].sort((a, b) => {
+    const aTime = new Date(a.responseDueAt || 0).getTime();
+    const bTime = new Date(b.responseDueAt || 0).getTime();
+    const aBad = Number.isNaN(aTime);
+    const bBad = Number.isNaN(bTime);
+    if (aBad && bBad) return 0;
+    if (aBad) return 1;
+    if (bBad) return -1;
+    return aTime - bTime;
+  });
+}
+
+/** 古い todo-report-data.json でも HTML 上は電話由来だけに揃える */
+function applyPhoneOnlyReportData(reportData) {
+  if (!isPhoneOnlyTodoReport()) return;
+
+  const ledgerSrc = reportData.ledger || [];
+  const phoneLedger = sortTasksByResponseDue(
+    ledgerSrc.filter(t => t.sourceType === 'phone')
+  );
+  reportData.ledger = phoneLedger;
+
+  const businesses = (reportData.businesses || [])
+    .map(b => ({
+      ...b,
+      events: [],
+      latestEvents: {},
+      tasks: sortTasksByResponseDue((b.tasks || []).filter(t => t.sourceType === 'phone'))
+    }))
+    .filter(b => b.tasks.length > 0);
+  reportData.businesses = businesses;
+
+  const serialSet = new Set(phoneLedger.map(t => t.serialNo));
+  const warnings = (reportData.checks?.warnings || []).filter(
+    w => !w.serialNo || serialSet.has(w.serialNo)
+  );
+  reportData.checks = {
+    ...reportData.checks,
+    warnings,
+    warningCount: warnings.length
+  };
+
+  const today = new Date();
+  reportData.summary = {
+    activeBusinessCount: businesses.length,
+    totalTaskCount: phoneLedger.length,
+    warningCount: warnings.length,
+    dueToSubmitTodayCount: phoneLedger.filter(task => {
+      if (!task.submittedAt) return false;
+      const submitted = new Date(task.submittedAt);
+      if (Number.isNaN(submitted.getTime())) return false;
+      return (
+        submitted.getFullYear() === today.getFullYear() &&
+        submitted.getMonth() === today.getMonth() &&
+        submitted.getDate() === today.getDate()
+      );
+    }).length
+  };
+}
+
+function isCompletedStatus(status) {
+  let normalized = String(status ?? '').trim();
+  try {
+    normalized = normalized.normalize('NFKC');
+  } catch {
+    // ignore
+  }
+  if (!normalized) return false;
+  if (normalized.includes('完了')) return true;
+  if (normalized.toLowerCase() === 'done') return true;
+  return false;
+}
+
 function renderBusinessBlock(business) {
   const latestReview = business.latestEvents?.review_committee;
   const latestBunkacho = business.latestEvents?.bunkacho_consultation;
@@ -62,7 +137,7 @@ function renderBusinessBlock(business) {
     : '客先資料提出期限: 未設定';
 
   const rows = business.tasks.map(task => `
-      <tr>
+      <tr class="${isCompletedStatus(task.status) ? 'task-completed' : ''}">
         <td>${escapeHtml(task.serialNo)}</td>
         <td>${escapeHtml(task.status)}</td>
         <td>${escapeHtml(task.assignee)}</td>
@@ -108,6 +183,9 @@ async function generateTodoReport() {
   const outputPath = path.join(__dirname, '..', 'output', 'todo-report.html');
 
   const reportData = JSON.parse(await fs.readFile(dataPath, 'utf-8'));
+  applyPhoneOnlyReportData(reportData);
+
+  const htmlBuildIso = new Date().toISOString();
   const generatedAt = new Date(reportData.generatedAt).toLocaleString('ja-JP', {
     timeZone: REPORT_TIMEZONE,
     year: 'numeric',
@@ -129,7 +207,7 @@ async function generateTodoReport() {
   const warnings = reportData.checks?.warnings || [];
 
   const ledgerRows = reportData.ledger.map(task => `
-      <tr>
+      <tr class="${isCompletedStatus(task.status) ? 'task-completed' : ''}">
         <td>${escapeHtml(task.serialNo)}</td>
         <td>${escapeHtml(task.status)}</td>
         <td>${escapeHtml(task.businessId)} / ${escapeHtml(task.businessName)}</td>
@@ -145,6 +223,8 @@ async function generateTodoReport() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
   <title>業務Todoレポート</title>
   <style>
     :root { color-scheme: light; }
@@ -162,14 +242,25 @@ async function generateTodoReport() {
     ul { margin-top: 0; }
     .footer-note { color: #59636e; font-size: 13px; }
     .warning-list li { color: #9a3412; }
+    tr.task-completed td {
+      color: #6e7781 !important;
+      background: #f0f3f6 !important;
+      text-decoration: line-through;
+    }
+    tr.task-completed td:nth-child(2) {
+      text-decoration: none !important;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
+  <!-- html-build: ${htmlBuildIso} -->
   <main>
     <p class="meta">WEEKLY TODO REPORT</p>
     <h1>業務進捗レポート（客先提出管理）</h1>
     <p class="meta">対象期間: ${periodStart} - ${periodEnd}</p>
     <p class="meta">作成日時: ${generatedAt}</p>
+    <p class="meta">HTMLビルド: ${escapeHtml(htmlBuildIso)}（この行が新しければ Surge まで届いています）</p>
     <p class="meta">レポート作成者: 自動集計ボット</p>
 
     <section class="summary">

@@ -1,36 +1,3 @@
 {
-  "items": [
-    {
-      "eventId": "event-20260430-12039485-bunkacho",
-      "businessId": "12039485",
-      "businessName": "受注整理業務",
-      "eventType": "bunkacho_consultation",
-      "eventName": "文化庁協議",
-      "eventDate": "2026-04-30"
-    },
-    {
-      "eventId": "event-20260430-57301842-bunkacho",
-      "businessId": "57301842",
-      "businessName": "請求確認業務",
-      "eventType": "bunkacho_consultation",
-      "eventName": "文化庁協議",
-      "eventDate": "2026-04-30"
-    },
-    {
-      "eventId": "event-20260502-88372619-review",
-      "businessId": "88372619",
-      "businessName": "在庫調整業務",
-      "eventType": "review_committee",
-      "eventName": "検討委員会",
-      "eventDate": "2026-05-02"
-    },
-    {
-      "eventId": "event-20260502-40195736-review",
-      "businessId": "40195736",
-      "businessName": "品質報告業務",
-      "eventType": "review_committee",
-      "eventName": "検討委員会",
-      "eventDate": "2026-05-02"
-    }
-  ]
+  "items": []
 }

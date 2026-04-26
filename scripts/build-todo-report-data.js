@@ -11,6 +11,7 @@ import {
   STATUS_LABELS,
   DEFAULT_CLIENT_DEADLINE_HOUR
 } from '../config/todo-report-settings.js';
+import { isPhoneOnlyTodoReport } from './todo-report-source-mode.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -297,17 +298,22 @@ async function buildTodoReportData() {
     readJson(path.join(sourceDir, 'business-events.json'))
   ]);
 
-  const rawTasks = [
-    ...(mailData.items || []).map(item => normalizeTask(item, 'mail')),
-    ...(meetingData.items || []).map(item => normalizeTask(item, 'meeting')),
-    ...(phoneData.items || []).map(item => normalizeTask(item, 'phone'))
-  ].filter(Boolean);
+  const phoneOnly = isPhoneOnlyTodoReport();
+  const eventItems = phoneOnly ? [] : (eventData.items || []);
 
-  const routineTasks = buildRoutineTasks(eventData.items || []);
+  const rawTasks = phoneOnly
+    ? [...(phoneData.items || []).map(item => normalizeTask(item, 'phone'))].filter(Boolean)
+    : [
+      ...(mailData.items || []).map(item => normalizeTask(item, 'mail')),
+      ...(meetingData.items || []).map(item => normalizeTask(item, 'meeting')),
+      ...(phoneData.items || []).map(item => normalizeTask(item, 'phone'))
+    ].filter(Boolean);
+
+  const routineTasks = phoneOnly ? [] : buildRoutineTasks(eventItems);
   const mergedTasks = dedupeTasks([...rawTasks, ...routineTasks]);
   const tasksWithSerial = assignSerialNumbers(mergedTasks);
   const validationWarnings = validateTasks(tasksWithSerial);
-  const businesses = buildBusinessSummaries(tasksWithSerial, eventData.items || []);
+  const businesses = buildBusinessSummaries(tasksWithSerial, eventItems);
 
   const reportData = {
     generatedAt: new Date().toISOString(),

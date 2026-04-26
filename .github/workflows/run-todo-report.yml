@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 実行モード（preview はメールdry-run）
+        description: 実行モード（preview はメールのみdry-run、HTMLはSurgeへ反映）
         required: true
         default: preview
         type: choice
@@ -42,6 +42,7 @@ jobs:
       - run: npm run run-todo-report
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'production')
         env:
+          TODO_REPORT_PHONE_ONLY: '1'
           MAGAZINE_SURGE_LOGIN: ${{ secrets.MAGAZINE_SURGE_LOGIN }}
           MAGAZINE_SURGE_TOKEN: ${{ secrets.MAGAZINE_SURGE_TOKEN }}
           MAGAZINE_SURGE_DOMAIN: ${{ secrets.MAGAZINE_SURGE_DOMAIN }}
@@ -60,8 +61,13 @@ jobs:
       - run: npm run run-todo-report:preview
         if: github.event_name == 'workflow_dispatch' && inputs.mode == 'preview'
         env:
+          TODO_REPORT_PHONE_ONLY: '1'
           TODO_REPORT_PHONE_LOG_CSV_URL: ${{ secrets.TODO_REPORT_PHONE_LOG_CSV_URL }}
           TODO_REPORT_FAIL_ON_WARNINGS: 0
+          TODO_REPORT_SURGE_LOGIN: ${{ secrets.TODO_REPORT_SURGE_LOGIN }}
+          TODO_REPORT_SURGE_TOKEN: ${{ secrets.TODO_REPORT_SURGE_TOKEN }}
+          TODO_REPORT_SURGE_DOMAIN: ${{ secrets.TODO_REPORT_SURGE_DOMAIN }}
+          TODO_REPORT_PUBLIC_URL: ${{ secrets.TODO_REPORT_PUBLIC_URL }}
 
       - name: Upload generated todo report
         uses: actions/upload-artifact@v4
