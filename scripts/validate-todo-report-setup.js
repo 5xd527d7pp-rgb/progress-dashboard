@@ -92,6 +92,15 @@ async function validateTodoReportSetup() {
     warnings.push('電話CSVはURL同期されません（raw-phone-log.csv のローカル内容を使用）');
   }
 
+  if (
+    !process.env.TODO_REPORT_DROPBOX_ACCESS_TOKEN ||
+    !process.env.TODO_REPORT_DROPBOX_MEETING_PATH
+  ) {
+    warnings.push(
+      'Dropbox 打合せ簿は同期されません（TODO_REPORT_DROPBOX_* 未設定。リポジトリ同梱の meeting-docs のみ）'
+    );
+  }
+
   if (errors.length === 0 && warnings.length === 0) {
     console.log('✅ Todoレポート実行前チェック: 問題なし');
     return;

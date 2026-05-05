@@ -1,0 +1,694 @@
+Return-path: <a-hasegawa@con-fujiyama.com>
+Original-recipient: rfc822;atsunori52@me.com
+Received: from p00-icloudmta-smtpin-us-west-2a-10-percent-7 by p111-mailgateway-smtp-7fdcf88f5b-ckbsz (mailgateway 2616B129)
+	with SMTP id 04f82adc-c6f7-480b-954d-1522355511d1 
+	for <atsunori52@me.com>; Fri, 1 May 2026 21:02:33 GMT
+X-ICLOUD-MAIL-BWL: 1
+X-Apple-MoveToFolder: INBOX 
+X-Apple-Action: WL/INBOX
+X-Apple-UUID: 04f82adc-c6f7-480b-954d-1522355511d1
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11020097.outbound.protection.outlook.com [52.101.229.97])
+	by p00-icloudmta-smtpin-us-west-2a-10-percent-7 (Postfix) with ESMTPS id B0FC5C11ADF
+	for <atsunori52@me.com>; Fri, 01 May 2026 21:02:28 +0000 (UTC)
+X-ICL-Info: GAtbRVYDBVBFSlVESgMFUFUKE0oWX1gHVQoPB0UFBExESVdZSgIPTExORhIcDVdPHRgVEh9RQQM1GgkZVVZDCBwABxoZHlUNGFkAE0VTWQxYHxMdEUlXDxRXBRgVEEQBSBgSBA1eWRAcTFQ3FVUYARoURh8dXFlfISBVJ0oIACEgSVZFVl9DFhcWExkcHkYQGg0DFAxZWQxbFhMDFF9ZCVsaCRpYQEIQSBQHHhQdXAMFGAgSGUNCAw8WCEZJAARSRUBRWRdFQgAaDAgTVkBEDQEcBQMRX1hMGgwSGxdfXUwWFgtXHFQLBAATDw4ZXVdRQ0xIGBZdXwEHFhUYHkQYARoURhoRVAteQhgCFUsEVFATG1NOTAkBUhdLAhIaCAAAR0gAQ0EIVVY1NjVEKAMGUzg7VkdAAhgoJTc2REgBGDInNiJZN2ViLjo2LVk7f3tc
+X-ICL-Score: 2.33203332332
+Authentication-Results: bimi.icloud.com; bimi=skipped reason="insufficient dmarc"
+X-ARC-Info: policy=pass; arc=pass; id=mx.microsoft.com 1; r1=1; r2=1
+Authentication-Results: arc.icloud.com; arc=pass
+Authentication-Results: dmarc.icloud.com; dmarc=none header.from=con-fujiyama.com
+X-DMARC-Policy: none
+X-DMARC-Info: pass=none; dmarc-policy=(nopolicy); s=u0; d=u0; pdomain=con-fujiyama.com
+Authentication-Results: dkim-verifier.icloud.com; dkim=pass header.d=fujiyama365.onmicrosoft.com header.i=@fujiyama365.onmicrosoft.com header.b=crcse7Hn
+Received-SPF: pass (spf.icloud.com: domain of a-hasegawa@con-fujiyama.com designates 52.101.229.97 as permitted sender) receiver=spf.icloud.com; client-ip=52.101.229.97; helo=TY3P286CU002.outbound.protection.outlook.com; envelope-from=a-hasegawa@con-fujiyama.com
+Authentication-Results: spf.icloud.com; spf=pass (spf.icloud.com: domain of a-hasegawa@con-fujiyama.com designates 52.101.229.97 as permitted sender) smtp.mailfrom=a-hasegawa@con-fujiyama.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IjapkIf9yCGQTb0PP5rdnpHJDoH8SyRuCa8V2P4HJUIeGJfGNf3lr7pzbrqr1kVCH4C6y1c+LJMZM1SGwPay6KXurM0Na8u6E8DOsAOJ6KCezHNnNZB/i7WqsXRV+qAkoInDGs97X1iOvQMa65VfUpgyuQZ60bfeL//V5as4U9BzErgHrMHG9o0SXcj+fa3Q+TjbVaVdGoW/QpWc1IXSHH/uXNJ3gMyxifZAVsmDncYPTtuVGRLYkRuUUiMeXxI9ZikkLKtfE2cRZp6bVt6wUGFiWZFi2vrzJhDKzK0vuI21JO9rZG94Wj09+mbHgj75IxrNevAc+65xakjcT3QB4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6ar5eQOSwYpdzsMBOAGN+9iDk66IdfEi4RzF78XCwys=;
+ b=fTFXSbPmCq6OOLaFvgG51grJ0Jx5jJ7pvSbCCRGnM7NkKQ+oX7ORuF9NWjTA3MFo0VT7b78QKemoP6AYWCd1xi2H1Qxx7fpFQO3dkcEpCvbNNAIeAIIORNl9Dmkc998lOB+Fphl3zK5O5Uv9sZL6dxuFLCBGXDpzNHtW+pdpcQqeCu2mSoObkG6rOv6TjODq+9NLex3snt65NZ40ZHV8d6p7ZXts5GjzmzIS3XvrfWuldU9uR7yLIww5UHdDsEOKfd8w8xBrcYJA0qlRLLsEkWVrV7VbGtnhxsKbYamyLyJTRlsRbBJNl04dvK31uOwwr6WHdWob/kq2wdwX/uEm4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=con-fujiyama.com; dmarc=pass action=none
+ header.from=con-fujiyama.com; dkim=pass header.d=con-fujiyama.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujiyama365.onmicrosoft.com; s=selector2-fujiyama365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6ar5eQOSwYpdzsMBOAGN+9iDk66IdfEi4RzF78XCwys=;
+ b=crcse7Hn+K7QtpxgVokIHyT8OVPE/eqe791xBBIXGCFdAFgJT9tUhfMyJ7NfzBfIplwEOAldKXjY6eGJW2/dbVCBadubvEttOfmq9YRXwPTNKZfkRmP0RQie+N8fRP3NmrTyCNHpI0XzpK2aYra52Tr8vs9d3C0dC3WqMnWPVmo=
+Received: from OS3P301MB0082.JPNP301.PROD.OUTLOOK.COM (2603:1096:604:20e::6)
+ by TY1P301MB0106.JPNP301.PROD.OUTLOOK.COM (2603:1096:400:2e3::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.23; Fri, 1 May
+ 2026 21:02:24 +0000
+Received: from OS3P301MB0082.JPNP301.PROD.OUTLOOK.COM ([::1]) by
+ OS3P301MB0082.JPNP301.PROD.OUTLOOK.COM ([fe80::7466:53fe:6da8:98a1%3]) with
+ Microsoft SMTP Server id 15.20.9870.022; Fri, 1 May 2026 21:02:24 +0000
+From: =?iso-2022-jp?B?GyRCRDlDK0BuGyhCICAbJEJGWD5PGyhC?=
+	<a-hasegawa@con-fujiyama.com>
+To: "atsunori52@me.com" <atsunori52@me.com>
+Subject:
+ =?iso-2022-jp?B?Rlc6IDQ5GyRCN28kTiU/JTklLyRONHxGfCQsGyhCNxskQkZ8MEobKEI=?=
+ =?iso-2022-jp?B?GyRCRmIkS0V+TWgkNyReJDkbKEI=?=
+Thread-Topic:
+ =?iso-2022-jp?B?NDkbJEI3byROJT8lOSUvJE40fEZ8JCwbKEI3GyRCRnwwSkZiJEsbKEI=?=
+ =?iso-2022-jp?B?GyRCRX5NaCQ3JF4kORsoQg==?=
+Thread-Index: AQHc2a3OV5lnyEoFSkOafWQqYrmlJ7X5qEK1
+Date: Fri, 1 May 2026 21:02:24 +0000
+Message-ID:
+ <7adb34b2fb594970b2deb86b21f498c4@OS3P301MB0082.JPNP301.PROD.OUTLOOK.COM>
+References:
+ <69f514ddf1bf_26918745318@ip-10-1-160-59.ap-northeast-1.compute.internal.mail>
+In-Reply-To:
+ <69f514ddf1bf_26918745318@ip-10-1-160-59.ap-northeast-1.compute.internal.mail>
+X-MS-Has-Attach:
+X-MS-Exchange-Inbox-Rules-Loop: a-hasegawa@con-fujiyama.com
+X-MS-TNEF-Correlator:
+x-ms-exchange-parent-message-id:
+ <69f514ddf1bf_26918745318@ip-10-1-160-59.ap-northeast-1.compute.internal.mail>
+auto-submitted: auto-generated
+x-ms-exchange-generated-message-source: Mailbox Rules Agent
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3P301MB0082:EE_|TY1P301MB0106:EE_
+x-ms-office365-filtering-correlation-id: ef254a4d-3274-4add-bb61-08dea7c4f182
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|10070799003|376014|1800799024|42112799006|13003099007|8096899003|56012099003|18002099003|22082099003;
+x-microsoft-antispam-message-info:
+ sZhGEsFfqcepg5zKV/Rgs0NT6ahqquV1Ykdrg8LPLz3xlg7PuOKI3jaYdUZhF4co1fa1OQXHBXpCV9K1x9wwJbSNWegypz7+o1oXb9oOK+PSHcg4f5cVpSKPgFNpbEkc4yr4OGNwxBTA/ZnN1vrbwzHOAV+2apVinZbNZMiS/Yz5iTYy/DLR4GX6pMbeHFagkdFuzEFHWnl+vFwKxEHXuF5HeQ6rL2DGFVweCP6WEsuTo2/DMHFVuporoB8A2BnM/bvmUYL6b1OelKYvwGUjtopDgXk5ge0CBUQvgU3TIp/lPrhoQxgfhBWsNJsreTKNMPxGKRblwMqZknmtfj/uLtyCmwfMjA8fYbfY6o8UYlZMiV24i6QEB0On2M69/t2OMS8OG5R/6fCyZSKEf4lnYjpidIH/dqW9JKGBWu58xdWydMIY5oEzI/AXIgVFwvVatJr6LMqvuuuc7BKWZ1dR8m6c2G/rMY/eqQsVWhJFd4VxcxZ7tKJ6ZD9UU+U2/C0STlxfQysy3kQne0lnsfdaiuft/PJPcyPGagsg4RRLOXxjfnEirIQmK1OvHEjvMG9zmJgAufXWB5YP2QiLg4f+wrNqCjJpOWMtcmDrth/+kYIw8ZXOwn97goAx7DYOnMXP
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3P301MB0082.JPNP301.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(42112799006)(13003099007)(8096899003)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ QQfnWUP6Z9X16boey2QUIiz1E9z2zxPa4ZwU7RNOPXKwX726H0lVMRfCp6hVTDp1FU0flbhswoNbO2evLEO26u7U+YtMY9aBp6NyL+kpAc9mIGx9wFa72C7tQpXsoy918AbhfFkbYzKu57RVSL0ca6arbyPhSKz/iKq0VtYYh6Yj1vu6PBfH6NTigryaj26lz+je/ADeDOVlScDWAUOcvebtljrSbFx1r2fIxfsvga7zEmbgoLZR2ggzshkV6plXrAufsjQYsEXXyVUAqLrG1CUDOq6Nl7D/k/EStbBt/nl3ry/mJFU8SpYr7ik8DDL91fXszdI334tglZrSNk5HHA3Y+nzGzR6Ji420IZ/1WxXVe69MBBzpZjOjKuH+0UrYJ94nj/j2qHB3DksHm06Qs35AhZVqUCVg8isT/zzyWvfaFHPt9iAVdDVLGHil4K0I
+Content-Type: multipart/alternative;
+	boundary="_000_7adb34b2fb594970b2deb86b21f498c4OS3P301MB0082JPNP301PRO_"
+MIME-Version: 1.0
+X-OriginatorOrg: con-fujiyama.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS3P301MB0082.JPNP301.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef254a4d-3274-4add-bb61-08dea7c4f182
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 May 2026 21:02:24.0340
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7e2f0ccd-d175-41d1-a153-31c2a2f59ee9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1P301MB0106
+X-MANTSH: 1TFkXGxoaGhEKWUQXaUEYXU5tc2tCBV8RCllNF3pPWFlFREtGa0ZGRV0RCl9ZFxg
+ YGhEKX00XZEVETxEKWUkXGnEaEBp3BhgaGnEbExIQGncGGBoGGhEKWV4XaGN5EQpDThdsYkRbH
+ lxEc19nYXAHQEwbckhBa34ZZwd5UGdoGH5FGxEKWFwXGQQaBB8SBRsaGgQdGwQbHBoEExsQGx4
+ aHxoRCl5ZF0JhWEdrEQpNXBcYHhgRCkxaF39pTU1rEQpFWRd7axEKTF8XegUFBQUFBQUFBUMRC
+ kxGF29Na2NsTWsRCkNaFx8YBBsaGwQYGBMEEx0RCkJeFxsRCkReFxgRCkJFF21+c2ATbUdTZW0
+ dEQpCThdkAWNgXngYSXtAHBEKQkwXaWV7AW96ZWxIUm8RCkJsF2AFU1NzRHpAXVNuEQpCQBduT
+ VlbZ0dOU0ZHTREKQlgXaF5NaW5ef0tgXwURCkJ4F3oFYm9yTGtrG1NEEQpNXhcbEQpwZxd6c1p
+ 6SE5OTlBiHRAZGhEKcGgXbG9lbEJ7bxtoG1wQGRoRCnBoF2N8Zn1oXkJMHWxmEBkaEQpwaBdpR
+ F9peGRLWhNbaxAZGhEKcGgXbXhwcGMaHV1aR3sQGRoRCnBoF2QceVlOSG1DQ2xLEBkaEQpwaBd
+ 6bmQdfh54eXpJThAZGhEKcGgXenNAQXhNYUVpR3oQGRoRCnBoF21eaRoeQE0fS2VvEBkaEQpwZ
+ xdlXRhCY3pSYFgdZhAZGhEKcGwXZFp5WGkZaBJMRxsQGRoRCm1+FxsRClhNF0sR
+X-Authority-Info: v=2.4 cv=E93AZKdl c=1 sm=1 tr=0 ts=69f514e5 cx=c_apl:c_pps
+ a=+q+SYPlOX4wg+O2Aj9ofkQ==:117 a=KWvOQs04uFl5JYH95pWQHK6vTCQ=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=NGcC8JguVDcA:10 a=DyNkri6n50QA:10 a=faz9bTuCUMoA:10
+ a=g67WsCV2ywEA:10 a=v7TjdtvWAAAA:8 a=LqonHXWOAAAA:8 a=grTWktvZyzvlMeTe0dQA:9
+ a=QRzjZtwMIBQA:10 a=PRpDppDLrCsA:10 a=r-HJ9bD__24A:10 a=UAVRJdkkkM0A:10
+ a=kEpPNEOF0WUXlX-dq3YA:9 a=IBf5QMru4wCrT8Pu:21 a=frz4AuCg-hUA:10
+ a=_W_S_7VecoQA:10 a=7a-5TX-YIB2zu5cyD6Jq:22 a=DzQW1Ty-EUm9VQuQZMsD:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTAxMDIwNyBTYWx0ZWRfX3cn4J7y0Dqxm
+ 2TR62gEsjcGXqV6mYLAdlEHCJN5gVdMUzDnnVaCZSCM7chbA4FFkPln73bhp6iYs/57BhVMytCU
+ l7299qf3O01mzT/0fkE4tWTCq+ZlKxGzAxS4lI4PSNCVvy+7AtDo5ft0h5ev4e1xvloyO5DVSed
+ tcNK8eQ28w4TDuPudqdqSUNIf3ZYJkwr8MFr8lOKefoKqJCmxoD3nfKs4LH0nAsxZLnAV24c8gk
+ 61tWvRfrqtpzVDLmlvJCXsPNpQYwJa1PE4eLMtL10XWL/YHimKrAudNyrMvypZ3gD9nzuXf89rS
+ F1ydAYqE2dwwGnNDijYtGUD7DIj7c34uacLOrIrrPakrGPdsXL8T2h8W6SNkHrw7CP1/D7dF3IR
+ w2O9B7Qu2ZVjbcbKhnO1S14z5v5qEfWrcItfvaktBkpoyg/H7tU=
+X-Proofpoint-ORIG-GUID: FHnq4vnYuMKZ-jf1XbkAT3M-SzMB2To1
+X-Proofpoint-GUID: FHnq4vnYuMKZ-jf1XbkAT3M-SzMB2To1
+X-JNJ: AAAAAAABw+VifAs6Czf362FIGPDiKtG8UO9cEgidY9BZNFHDYqPDMXk7cQsIv042Eq2MZ3qyGN7anWZsAH3RRIJl1fQrXpIxw83grGYR4dWgmwyAbOFzKyotwOTPbAEwFliKXIyBolCdtoppEI6V96r96qBh15LiLwyQnfl1gFgntbYW2fAy8DdncJI/ckLOzomzX/+hdWlDeVB4Bc/W2lPBlsmbhNzua40Xo56TYNx1B7r+NBV7d5xMTJEos746o9UPZkbKHm5fNKx9ABDsMwdE/OKS+NTojdF7dDwqVgVxFQMenANp6x1+RxyDf8quD9Zy5o0YwpFjJMi9AwkOFTjUPaySIO679nmV/EyplM+KEZipjy2f/uo2iu56ds4h02+ZwopdmFe4cOhU8f5u65nPzbYLIXGMWXdvaIMUjsVQQb4XwuTyN/g/QzKFQlaEsYIcTAZtpSBx+1oT8IXsWdRLDqBol2qnjd9tuk1YEemuTjHSWLPNHm+knUDr2/u4ttubdNheuXPapFom8AAaqf+C2GA1DTtwCPS3a0sj3JVWPkT/3FP5KTFvE7bPhe4ssONHp0s8aasBAxWYp1/ujtIpjWNc7awpdcRnanXMSf2+oXOjXyJXOgSE3SqRRARjqez4pfqiWrkCD3Q9L0O7AUO9qkyG41YCCS/nJheDqu7hG3QR/u6g4vtRxzxa4t5/pZR8AKTv6PhgOyON2laC6E/h1jDhPG08q8rT3lhDVKxJ7OO7YSDBrisbUinTxUZh4NMy6tnNyBoq4TW3UabwCvCt6j/Ll8KhUf5bJxB1Rht0PozozZ/ZhdcTbxdd6MRtDnnkM5kpgzydaN9vtSsWwM+lgIgP7gtfVkS1wCJxDDNakmXh7iDA0vDcLUsSI/+6TCgHwYRaPPzxMy0sYQEFpfl/86DL82N2OCRG8sKXEw1YEBhb+xaq+27xqRy3MxhGyql7zznOhxHQCmc8zF3hSbiidD1MDCx61xeGrbIG+ynixiC7+y1oGmJwMg==
+
+--_000_7adb34b2fb594970b2deb86b21f498c4OS3P301MB0082JPNP301PRO_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+
+________________________________
+=1B$B:9=3DP?M=1B(B: fujiyama <redmine@mail.cloud.redmine.jp>
+=1B$BAw?.F|;~=1B(B: 2026=1B$BG/=1B(B5=1B$B7n=1B(B2=1B$BF|EZMKF|=1B(B 6:02:2=
+1 (UTC+09:00) Osaka, Sapporo, Tokyo
+=1B$B08@h=1B(B: =1B$BD9C+@n=1B(B =1B$BFX>O=1B(B <a-hasegawa@con-fujiyama.co=
+m>
+=1B$B7oL>=1B(B: 49=1B$B7o$N%?%9%/$N4|F|$,=1B(B7=1B$BF|0JFb$KE~Mh$7$^$9=1B(B
+
+
+49<https://fujiyama.cloud.redmine.jp/issues?f%5B%5D=3Dstatus_id&f%5B%5D=3Da=
+ssigned_to_id&f%5B%5D=3Ddue_date&op%5Bassigned_to_id%5D=3D%3D&op%5Bdue_date=
+%5D=3D%3Ct%2B&op%5Bstatus_id%5D=3Do&set_filter=3D1&sort=3Ddue_date%3Aasc&v%=
+5Bassigned_to_id%5D%5B%5D=3Dme&v%5Bdue_date%5D%5B%5D=3D7>=1B$B7o$NC4Ev%?%9%=
+/$N4|F|$,=1B(B7=1B$BF|0JFb$KE~Mh$7$^$9=1B(B:
+
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15123<https://fujiyama.cloud.re=
+dmine.jp/issues/15123>: =1B$B6HL3?JD=3DN(=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B=
+ =1B$BCY$l=1B(B)
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15124<https://fujiyama.cloud.re=
+dmine.jp/issues/15124>: =1B$B7W2h=3D`Hw=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B =
+=1B$BCY$l=1B(B)
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15125<https://fujiyama.cloud.re=
+dmine.jp/issues/15125>: =1B$BBG9g$;6(5D=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B =
+=1B$BCY$l=1B(B)
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15126<https://fujiyama.cloud.re=
+dmine.jp/issues/15126>: =1B$B0dJ*<BB,=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B =1B=
+$BCY$l=1B(B)
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15127<https://fujiyama.cloud.re=
+dmine.jp/issues/15127>: =1B$B4Q;!I=3D:n@.=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B=
+ =1B$BCY$l=1B(B)
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15128<https://fujiyama.cloud.re=
+dmine.jp/issues/15128>: =1B$B<RFb9;@5=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B =1B=
+$BCY$l=1B(B)
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15129<https://fujiyama.cloud.re=
+dmine.jp/issues/15129>: =1B$BG<IJ=3D`Hw=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B =
+=1B$BCY$l=1B(B)
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15130<https://fujiyama.cloud.re=
+dmine.jp/issues/15130>: =1B$BG<IJ=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B =1B$BCY=
+$l=1B(B)
+  *   20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B=
+$B5F@n;T650i0Q0w2q=1B(B - =1B$B<B6HL3=1B(B #15131<https://fujiyama.cloud.re=
+dmine.jp/issues/15131>: =1B$B5R@h9;@5=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B =1B=
+$BCY$l=1B(B)
+  *   20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8)!!8V=
+LnD.=1B(B - =1B$B<B6HL3=1B(B #15115<https://fujiyama.cloud.redmine.jp/issue=
+s/15115>: =1B$B6HL3?JD=3DN(=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8)!!8V=
+LnD.=1B(B - =1B$B<B6HL3=1B(B #15116<https://fujiyama.cloud.redmine.jp/issue=
+s/15116>: =1B$B7W2h=3D`Hw=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8)!!8V=
+LnD.=1B(B - =1B$B<B6HL3=1B(B #15117<https://fujiyama.cloud.redmine.jp/issue=
+s/15117>: =1B$BBG9g$;6(5D=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8)!!8V=
+LnD.=1B(B - =1B$B<B6HL3=1B(B #15118<https://fujiyama.cloud.redmine.jp/issue=
+s/15118>: =1B$B8!F$2q;22C=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8)!!8V=
+LnD.=1B(B - =1B$B<B6HL3=1B(B #15119<https://fujiyama.cloud.redmine.jp/issue=
+s/15119>: =1B$B;qNAD4::=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8)!!8V=
+LnD.=1B(B - =1B$B<B6HL3=1B(B #15120<https://fujiyama.cloud.redmine.jp/issue=
+s/15120>: =1B$B8=3D>l=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8)!!8V=
+LnD.=1B(B - =1B$B<B6HL3=1B(B #15121<https://fujiyama.cloud.redmine.jp/issue=
+s/15121>: =1B$BG<IJ=3D`Hw=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8)!!8V=
+LnD.=1B(B - =1B$B<B6HL3=1B(B #15122<https://fujiyama.cloud.redmine.jp/issue=
+s/15122>: =1B$BG<IJ=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12422<https://fujiyama.cloud.redmi=
+ne.jp/issues/12422>: =1B$B7W2h=3D`Hw=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12423<https://fujiyama.cloud.redmi=
+ne.jp/issues/12423>: =1B$BBG9g$;6(5D=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12424<https://fujiyama.cloud.redmi=
+ne.jp/issues/12424>: =1B$BEZ4o<BB,=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12425<https://fujiyama.cloud.redmi=
+ne.jp/issues/12425>: =1B$B@P4o<BB,=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12426<https://fujiyama.cloud.redmi=
+ne.jp/issues/12426>: =1B$BEZ4o%H%l!<%9=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12427<https://fujiyama.cloud.redmi=
+ne.jp/issues/12427>: =1B$B@P4o%H%l!<%9=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12428<https://fujiyama.cloud.redmi=
+ne.jp/issues/12428>: =1B$B<RFb9;@5=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12429<https://fujiyama.cloud.redmi=
+ne.jp/issues/12429>: =1B$B4Q;!I=3D:n@.=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12430<https://fujiyama.cloud.redmi=
+ne.jp/issues/12430>: =1B$BG<IJ=3D`Hw=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!KdB=
+"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5rE@E=
+ZCO6h2h@0M}AH9g=1B(B - =1B$B<B6HL3=1B(B #12431<https://fujiyama.cloud.redmi=
+ne.jp/issues/12431>: =1B$BG<IJ=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19248<https://fujiyam=
+a.cloud.redmine.jp/issues/19248>: =1B$B6HL3?JD=3DN(=1B(B (36=1B$BF|=1B(B =
+=1B$BCY$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19249<https://fujiyam=
+a.cloud.redmine.jp/issues/19249>: =1B$B7W2h=3D`Hw=1B(B (36=1B$BF|=1B(B =1B$=
+BCY$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19250<https://fujiyam=
+a.cloud.redmine.jp/issues/19250>: =1B$BBG9g$;6(5D=1B(B (36=1B$BF|=1B(B =1B$=
+BCY$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19251<https://fujiyam=
+a.cloud.redmine.jp/issues/19251>: =1B$B7W2h=3Dq:n@.=1B(B (36=1B$BF|=1B(B =
+=1B$BCY$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19252<https://fujiyam=
+a.cloud.redmine.jp/issues/19252>: =1B$B?^HG:n@.=1B(B (36=1B$BF|=1B(B =1B$BC=
+Y$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19253<https://fujiyam=
+a.cloud.redmine.jp/issues/19253>: =1B$B%o!<%/%7%g%C%WBP1~=1B(B (36=1B$BF|=
+=1B(B =1B$BCY$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19254<https://fujiyam=
+a.cloud.redmine.jp/issues/19254>: =1B$B%"%s%1!<%HBP1~=1B(B (36=1B$BF|=1B(B =
+=1B$BCY$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19255<https://fujiyam=
+a.cloud.redmine.jp/issues/19255>: =1B$BG<IJ=3D`Hw=1B(B (36=1B$BF|=1B(B =1B$=
+BCY$l=1B(B)
+  *   20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g6HL=
+30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - =1B$B<B6HL3=1B(B #19256<https://fujiyam=
+a.cloud.redmine.jp/issues/19256>: =1B$BG<IJ=1B(B (36=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)
+  *   20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(B_=1B$B4t=
+Il8)!!3FL386;T=1B(B - =1B$B<B6HL3=1B(B #16171<https://fujiyama.cloud.redmin=
+e.jp/issues/16171>: =1B$B6HL3?JD=3DN(=1B(B (32=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(B_=1B$B4t=
+Il8)!!3FL386;T=1B(B - =1B$B<B6HL3=1B(B #16172<https://fujiyama.cloud.redmin=
+e.jp/issues/16172>: =1B$B7W2h=3D`Hw=1B(B (32=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(B_=1B$B4t=
+Il8)!!3FL386;T=1B(B - =1B$B<B6HL3=1B(B #16173<https://fujiyama.cloud.redmin=
+e.jp/issues/16173>: =1B$BJ]B83hMQ7W2h:n@.;Y1g=1B(B (32=1B$BF|=1B(B =1B$BCY$=
+l=1B(B)
+  *   20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(B_=1B$B4t=
+Il8)!!3FL386;T=1B(B - =1B$B<B6HL3=1B(B #16174<https://fujiyama.cloud.redmin=
+e.jp/issues/16174>: =1B$B0Q0w2qEy1?1DJd=3Du=1B(B (32=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)
+  *   20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(B_=1B$B4t=
+Il8)!!3FL386;T=1B(B - =1B$B<B6HL3=1B(B #16175<https://fujiyama.cloud.redmin=
+e.jp/issues/16175>: =1B$BBG9g$;6(5D=1B(B (32=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(B_=1B$B4t=
+Il8)!!3FL386;T=1B(B - =1B$B<B6HL3=1B(B #16176<https://fujiyama.cloud.redmin=
+e.jp/issues/16176>: =1B$B$H$j$^$H$a!&G<IJ=3D`Hw=1B(B (32=1B$BF|=1B(B =1B$BC=
+Y$l=1B(B)
+  *   20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=
+=3D#;TET;T%V%i%s%IAOB$6I=1B(B - =1B$B<B6HL3=1B(B #16177<https://fujiyama.cl=
+oud.redmine.jp/issues/16177>: =1B$B6HL3?JD=3DN(=1B(B (32=1B$BF|=1B(B =1B$BC=
+Y$l=1B(B)
+  *   20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=
+=3D#;TET;T%V%i%s%IAOB$6I=1B(B - =1B$B<B6HL3=1B(B #16178<https://fujiyama.cl=
+oud.redmine.jp/issues/16178>: =1B$BKL6e=3D#;T$NJ82=3D:b$K4X$9$k;vA0GD0.;Y1g=
+=1B(B (32=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=
+=3D#;TET;T%V%i%s%IAOB$6I=1B(B - =1B$B<B6HL3=1B(B #16179<https://fujiyama.cl=
+oud.redmine.jp/issues/16179>: =1B$B;T$N35MW5Z$S;T$NJ82=3D:b$N35MW$N:n@.=1B(=
+B (32=1B$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=
+=3D#;TET;T%V%i%s%IAOB$6I=1B(B - =1B$B<B6HL3=1B(B #16180<https://fujiyama.cl=
+oud.redmine.jp/issues/16180>: =1B$BL$;XDjJ82=3D:b%j%9%H:n@.;Y1g=1B(B (32=1B=
+$BF|=1B(B =1B$BCY$l=1B(B)
+  *   20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=
+=3D#;TET;T%V%i%s%IAOB$6I=1B(B - =1B$B<B6HL3=1B(B #16181<https://fujiyama.cl=
+oud.redmine.jp/issues/16181>: =1B$B6(5D2q$N1?1D;Y1g=1B(B (32=1B$BF|=1B(B =
+=1B$BCY$l=1B(B)
+  *   20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=
+=3D#;TET;T%V%i%s%IAOB$6I=1B(B - =1B$B<B6HL3=1B(B #16182<https://fujiyama.cl=
+oud.redmine.jp/issues/16182>: =1B$BBG9g$;6(5D=1B(B (32=1B$BF|=1B(B =1B$BCY$=
+l=1B(B)
+  *   20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=
+=3D#;TET;T%V%i%s%IAOB$6I=1B(B - =1B$B<B6HL3=1B(B #16183<https://fujiyama.cl=
+oud.redmine.jp/issues/16183>: =1B$BG<IJ=3D`Hw=1B(B (32=1B$BF|=1B(B =1B$BCY$=
+l=1B(B)
+
+=1B$B$9$Y$F$N%?%9%/$rI=3D<(=1B(B<https://fujiyama.cloud.redmine.jp/issues?a=
+ssigned_to_id=3Dme&set_filter=3D1&sort=3Ddue_date%3Aasc> (75=1B$B7oL$40N;=
+=1B(B)
+
+________________________________
+
+My Redmine=1B$B$+$iAw?.=1B(B - https://hosting.redmine.jp/
+=1B$B%W%m%8%'%/%H4IM}%=3D%U%H%&%'%"=1B(BRedmine=1B$B$N%/%i%&%I%5!<%S%9=1B(B
+
+--_000_7adb34b2fb594970b2deb86b21f498c4OS3P301MB0082JPNP301PRO_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<style>
+<!--
+a:link
+	{color:#169}
+a:visited
+	{color:#169}
+a:hover
+	{color:#c61a1a}
+a:active
+	{color:#c61a1a}
+-->
+</style>
+</head>
+<body style=3D"font-family:Verdana,sans-serif; font-size:14px; line-height:=
+1.4em; color:#222">
+<strong>
+<div><font face=3D"Tahoma" color=3D"#000000" size=3D"2">&nbsp;</font></div>
+</strong>
+<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
+<font face=3D"Tahoma" size=3D"2"><b>=1B$B:9=3DP?M=1B(B:</b> fujiyama &lt;re=
+dmine@mail.cloud.redmine.jp&gt;<br>
+<b>=1B$BAw?.F|;~=1B(B:</b> 2026=1B$BG/=1B(B5=1B$B7n=1B(B2=1B$BF|EZMKF|=1B(B=
+ 6:02:21 (UTC+09:00) Osaka, Sapporo, Tokyo<br>
+<b>=1B$B08@h=1B(B:</b> =1B$BD9C+@n=1B(B =1B$BFX>O=1B(B &lt;a-hasegawa@con-f=
+ujiyama.com&gt;<br>
+<b>=1B$B7oL>=1B(B:</b> 49=1B$B7o$N%?%9%/$N4|F|$,=1B(B7=1B$BF|0JFb$KE~Mh$7$^=
+$9=1B(B<br>
+</font><br>
+<div></div>
+<div>
+<p><a href=3D"https://fujiyama.cloud.redmine.jp/issues?f%5B%5D=3Dstatus_id&=
+amp;f%5B%5D=3Dassigned_to_id&amp;f%5B%5D=3Ddue_date&amp;op%5Bassigned_to_id=
+%5D=3D%3D&amp;op%5Bdue_date%5D=3D%3Ct%2B&amp;op%5Bstatus_id%5D=3Do&amp;set_=
+filter=3D1&amp;sort=3Ddue_date%3Aasc&amp;v%5Bassigned_to_id%5D%5B%5D=3Dme&a=
+mp;v%5Bdue_date%5D%5B%5D=3D7" style=3D"color:#169">49</a>=1B$B7o$NC4Ev%?%9%=
+/$N4|F|$,=1B(B7=1B$BF|0JFb$KE~Mh$7$^$9=1B(B:</p>
+<ul>
+<li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,NL6HL30QBw=1B(B_=1B$B=
+5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 p=
+riority-default overdue parent behind-schedule assigned-to-me" href=3D"http=
+s://fujiyama.cloud.redmine.jp/issues/15123" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15123</a>: =1B$B6HL3?JD=3DN(=1B(B (=1B$BLs=1B(B2=1B$B%v7n=
+=1B(B =1B$BCY$l=1B(B)</li><li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0=
+dJ*B,NL6HL30QBw=1B(B_=1B$B5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker=
+-266 status-1 priority-2 priority-default overdue child behind-schedule ass=
+igned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/15124" style=
+=3D"color:#169">
+=1B$B<B6HL3=1B(B #15124</a>: =1B$B7W2h=3D`Hw=1B(B (=1B$BLs=1B(B2=1B$B%v7n=
+=1B(B =1B$BCY$l=1B(B)</li><li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0=
+dJ*B,NL6HL30QBw=1B(B_=1B$B5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker=
+-266 status-1 priority-2 priority-default overdue child behind-schedule ass=
+igned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/15125" style=
+=3D"color:#169">
+=1B$B<B6HL3=1B(B #15125</a>: =1B$BBG9g$;6(5D=1B(B (=1B$BLs=1B(B2=1B$B%v7n=
+=1B(B =1B$BCY$l=1B(B)</li><li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0=
+dJ*B,NL6HL30QBw=1B(B_=1B$B5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker=
+-266 status-1 priority-2 priority-default overdue child behind-schedule ass=
+igned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/15126" style=
+=3D"color:#169">
+=1B$B<B6HL3=1B(B #15126</a>: =1B$B0dJ*<BB,=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(=
+B =1B$BCY$l=1B(B)</li><li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B=
+,NL6HL30QBw=1B(B_=1B$B5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker-266=
+ status-1 priority-2 priority-default overdue child behind-schedule assigne=
+d-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/15127" style=3D"c=
+olor:#169">
+=1B$B<B6HL3=1B(B #15127</a>: =1B$B4Q;!I=3D:n@.=1B(B (=1B$BLs=1B(B2=1B$B%v7n=
+=1B(B =1B$BCY$l=1B(B)</li><li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0=
+dJ*B,NL6HL30QBw=1B(B_=1B$B5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker=
+-266 status-1 priority-2 priority-default overdue child behind-schedule ass=
+igned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/15128" style=
+=3D"color:#169">
+=1B$B<B6HL3=1B(B #15128</a>: =1B$B<RFb9;@5=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(=
+B =1B$BCY$l=1B(B)</li><li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B=
+,NL6HL30QBw=1B(B_=1B$B5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker-266=
+ status-1 priority-2 priority-default overdue child behind-schedule assigne=
+d-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/15129" style=3D"c=
+olor:#169">
+=1B$B<B6HL3=1B(B #15129</a>: =1B$BG<IJ=3D`Hw=1B(B (=1B$BLs=1B(B2=1B$B%v7n=
+=1B(B =1B$BCY$l=1B(B)</li><li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0=
+dJ*B,NL6HL30QBw=1B(B_=1B$B5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker=
+-266 status-1 priority-2 priority-default overdue child behind-schedule ass=
+igned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/15130" style=
+=3D"color:#169">
+=1B$B<B6HL3=1B(B #15130</a>: =1B$BG<IJ=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(B =
+=1B$BCY$l=1B(B)</li><li>20250503_=1B$BNaOB#7G/EY!!B@ED%NC+0d@W=3DPEZ0dJ*B,N=
+L6HL30QBw=1B(B_=1B$B5F@n;T650i0Q0w2q=1B(B - <a class=3D"issue tracker-266 s=
+tatus-1 priority-2 priority-default overdue child behind-schedule assigned-=
+to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/15131" style=3D"col=
+or:#169">
+=1B$B<B6HL3=1B(B #15131</a>: =1B$B5R@h9;@5=1B(B (=1B$BLs=1B(B2=1B$B%v7n=1B(=
+B =1B$BCY$l=1B(B)</li><li>20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B=
+(B_=1B$B;0=3DE8)!!8VLnD.=1B(B - <a class=3D"issue tracker-266 status-1 prio=
+rity-2 priority-default overdue parent behind-schedule assigned-to-me" href=
+=3D"https://fujiyama.cloud.redmine.jp/issues/15115" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15115</a>: =1B$B6HL3?JD=3DN(=1B(B (47=1B$BF|=1B(B =1B$BCY=
+$l=1B(B)</li><li>20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;=
+0=3DE8)!!8VLnD.=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 pr=
+iority-default overdue child behind-schedule assigned-to-me" href=3D"https:=
+//fujiyama.cloud.redmine.jp/issues/15116" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15116</a>: =1B$B7W2h=3D`Hw=1B(B (47=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=
+=3DE8)!!8VLnD.=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 pri=
+ority-default overdue child behind-schedule assigned-to-me" href=3D"https:/=
+/fujiyama.cloud.redmine.jp/issues/15117" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15117</a>: =1B$BBG9g$;6(5D=1B(B (47=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=
+=3DE8)!!8VLnD.=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 pri=
+ority-default overdue child behind-schedule assigned-to-me" href=3D"https:/=
+/fujiyama.cloud.redmine.jp/issues/15118" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15118</a>: =1B$B8!F$2q;22C=1B(B (47=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=
+=3DE8)!!8VLnD.=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 pri=
+ority-default overdue child behind-schedule assigned-to-me" href=3D"https:/=
+/fujiyama.cloud.redmine.jp/issues/15119" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15119</a>: =1B$B;qNAD4::=1B(B (47=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=
+=3DE8)!!8VLnD.=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 pri=
+ority-default overdue child behind-schedule assigned-to-me" href=3D"https:/=
+/fujiyama.cloud.redmine.jp/issues/15120" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15120</a>: =1B$B8=3D>l=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(=
+B)</li><li>20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=3DE8=
+)!!8VLnD.=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 priority=
+-default overdue child behind-schedule assigned-to-me" href=3D"https://fuji=
+yama.cloud.redmine.jp/issues/15121" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15121</a>: =1B$BG<IJ=3D`Hw=1B(B (47=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250504_=1B$BNaOB#7G/EYL>>!COAm9gD4::6HL30QBw=1B(B_=1B$B;0=
+=3DE8)!!8VLnD.=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 pri=
+ority-default overdue child behind-schedule assigned-to-me" href=3D"https:/=
+/fujiyama.cloud.redmine.jp/issues/15122" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #15122</a>: =1B$BG<IJ=1B(B (47=1B$BF|=1B(B =1B$BCY$l=1B(B)=
+</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M};v6H!!=
+KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFnET;T5r=
+E@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12422" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12422</a>: =1B$B7W2h=3D`Hw=1B(B (44=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M}=
+;v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFn=
+ET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12423" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12423</a>: =1B$BBG9g$;6(5D=1B(B (44=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M}=
+;v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFn=
+ET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12424" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12424</a>: =1B$BEZ4o<BB,=1B(B (44=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M}=
+;v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFn=
+ET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12425" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12425</a>: =1B$B@P4o<BB,=1B(B (44=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M}=
+;v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFn=
+ET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12426" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12426</a>: =1B$BEZ4o%H%l!<%9=1B(B (44=1B$BF|=1B(B =1B$BCY=
+$l=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0=
+M};v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1X=
+FnET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12427" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12427</a>: =1B$B@P4o%H%l!<%9=1B(B (44=1B$BF|=1B(B =1B$BCY=
+$l=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0=
+M};v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1X=
+FnET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12428" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12428</a>: =1B$B<RFb9;@5=1B(B (44=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M}=
+;v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFn=
+ET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12429" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12429</a>: =1B$B4Q;!I=3D:n@.=1B(B (44=1B$BF|=1B(B =1B$BCY=
+$l=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0=
+M};v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1X=
+FnET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12430" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12430</a>: =1B$BG<IJ=3D`Hw=1B(B (44=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250163_=1B$BNaOB#7G/EY!!B^0f;TB^0f1XFnET;T5rE@EZCO6h2h@0M}=
+;v6H!!KdB"J82=3D:bD4::$KH<$&0d9=3D@0M}:n6H6HL30QBw=1B(B_=1B$BB^0f;TB^0f1XFn=
+ET;T5rE@EZCO6h2h@0M}AH9g=1B(B -
+<a class=3D"issue tracker-266 status-1 priority-2 priority-default overdue =
+behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/i=
+ssues/12431" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #12431</a>: =1B$BG<IJ=1B(B (44=1B$BF|=1B(B =1B$BCY$l=1B(B)=
+</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:vDj;Y1g=
+6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tracker-266 status=
+-1 priority-2 priority-default overdue parent behind-schedule assigned-to-m=
+e" href=3D"https://fujiyama.cloud.redmine.jp/issues/19248" style=3D"color:#=
+169">
+=1B$B<B6HL3=1B(B #19248</a>: =1B$B6HL3?JD=3DN(=1B(B (36=1B$BF|=1B(B =1B$BCY=
+$l=1B(B)</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h=
+:vDj;Y1g6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tracker-26=
+6 status-1 priority-2 priority-default overdue child behind-schedule assign=
+ed-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/19249" style=3D"=
+color:#169">
+=1B$B<B6HL3=1B(B #19249</a>: =1B$B7W2h=3D`Hw=1B(B (36=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:v=
+Dj;Y1g6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tracker-266 =
+status-1 priority-2 priority-default overdue child behind-schedule assigned=
+-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/19250" style=3D"co=
+lor:#169">
+=1B$B<B6HL3=1B(B #19250</a>: =1B$BBG9g$;6(5D=1B(B (36=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:v=
+Dj;Y1g6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tracker-266 =
+status-1 priority-2 priority-default overdue child behind-schedule assigned=
+-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/19251" style=3D"co=
+lor:#169">
+=1B$B<B6HL3=1B(B #19251</a>: =1B$B7W2h=3Dq:n@.=1B(B (36=1B$BF|=1B(B =1B$BCY=
+$l=1B(B)</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h=
+:vDj;Y1g6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tracker-26=
+6 status-1 priority-2 priority-default overdue child behind-schedule assign=
+ed-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/19252" style=3D"=
+color:#169">
+=1B$B<B6HL3=1B(B #19252</a>: =1B$B?^HG:n@.=1B(B (36=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:v=
+Dj;Y1g6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tracker-266 =
+status-1 priority-2 priority-default overdue child behind-schedule assigned=
+-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/19253" style=3D"co=
+lor:#169">
+=1B$B<B6HL3=1B(B #19253</a>: =1B$B%o!<%/%7%g%C%WBP1~=1B(B (36=1B$BF|=1B(B =
+=1B$BCY$l=1B(B)</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83=
+hMQ7W2h:vDj;Y1g6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tra=
+cker-266 status-1 priority-2 priority-default overdue child behind-schedule=
+ assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/19254" st=
+yle=3D"color:#169">
+=1B$B<B6HL3=1B(B #19254</a>: =1B$B%"%s%1!<%HBP1~=1B(B (36=1B$BF|=1B(B =1B$B=
+CY$l=1B(B)</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W=
+2h:vDj;Y1g6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tracker-=
+266 status-1 priority-2 priority-default overdue child behind-schedule assi=
+gned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/19255" style=
+=3D"color:#169">
+=1B$B<B6HL3=1B(B #19255</a>: =1B$BG<IJ=3D`Hw=1B(B (36=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250632_=1B$BNaOB#7G/EY!!FCJL;K@W@>ET868EJ/72J]B83hMQ7W2h:v=
+Dj;Y1g6HL30QBw=1B(B_=1B$B5\:j8)650iD#=1B(B - <a class=3D"issue tracker-266 =
+status-1 priority-2 priority-default overdue child behind-schedule assigned=
+-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/19256" style=3D"co=
+lor:#169">
+=1B$B<B6HL3=1B(B #19256</a>: =1B$BG<IJ=1B(B (36=1B$BF|=1B(B =1B$BCY$l=1B(B)=
+</li><li>20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(B_=1B$=
+B4tIl8)!!3FL386;T=1B(B - <a class=3D"issue tracker-266 status-1 priority-2 =
+priority-default overdue parent behind-schedule assigned-to-me" href=3D"htt=
+ps://fujiyama.cloud.redmine.jp/issues/16171" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #16171</a>: =1B$B6HL3?JD=3DN(=1B(B (32=1B$BF|=1B(B =1B$BCY=
+$l=1B(B)</li><li>20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=
+=1B(B_=1B$B4tIl8)!!3FL386;T=1B(B - <a class=3D"issue tracker-266 status-1 p=
+riority-2 priority-default overdue child behind-schedule assigned-to-me" hr=
+ef=3D"https://fujiyama.cloud.redmine.jp/issues/16172" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #16172</a>: =1B$B7W2h=3D`Hw=1B(B (32=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(=
+B_=1B$B4tIl8)!!3FL386;T=1B(B - <a class=3D"issue tracker-266 status-1 prior=
+ity-2 priority-default overdue child behind-schedule assigned-to-me" href=
+=3D"https://fujiyama.cloud.redmine.jp/issues/16173" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #16173</a>: =1B$BJ]B83hMQ7W2h:n@.;Y1g=1B(B (32=1B$BF|=1B(B=
+ =1B$BCY$l=1B(B)</li><li>20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6H=
+L30QBw=1B(B_=1B$B4tIl8)!!3FL386;T=1B(B - <a class=3D"issue tracker-266 stat=
+us-1 priority-2 priority-default overdue child behind-schedule assigned-to-=
+me" href=3D"https://fujiyama.cloud.redmine.jp/issues/16174" style=3D"color:=
+#169">
+=1B$B<B6HL3=1B(B #16174</a>: =1B$B0Q0w2qEy1?1DJd=3Du=1B(B (32=1B$BF|=1B(B =
+=1B$BCY$l=1B(B)</li><li>20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL=
+30QBw=1B(B_=1B$B4tIl8)!!3FL386;T=1B(B - <a class=3D"issue tracker-266 statu=
+s-1 priority-2 priority-default overdue child behind-schedule assigned-to-m=
+e" href=3D"https://fujiyama.cloud.redmine.jp/issues/16175" style=3D"color:#=
+169">
+=1B$B<B6HL3=1B(B #16175</a>: =1B$BBG9g$;6(5D=1B(B (32=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250454_=1B$B;K@WK7$NDM8EJ/J]B83hMQ7W2h:n@.;Y1g6HL30QBw=1B(=
+B_=1B$B4tIl8)!!3FL386;T=1B(B - <a class=3D"issue tracker-266 status-1 prior=
+ity-2 priority-default overdue child behind-schedule assigned-to-me" href=
+=3D"https://fujiyama.cloud.redmine.jp/issues/16176" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #16176</a>: =1B$B$H$j$^$H$a!&G<IJ=3D`Hw=1B(B (32=1B$BF|=1B=
+(B =1B$BCY$l=1B(B)</li><li>20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g=
+6HL3=1B(B_=1B$BKL6e=3D#;TET;T%V%i%s%IAOB$6I=1B(B - <a class=3D"issue tracke=
+r-266 status-1 priority-2 priority-default overdue parent behind-schedule a=
+ssigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/16177" styl=
+e=3D"color:#169">
+=1B$B<B6HL3=1B(B #16177</a>: =1B$B6HL3?JD=3DN(=1B(B (32=1B$BF|=1B(B =1B$BCY=
+$l=1B(B)</li><li>20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=
+=1B$BKL6e=3D#;TET;T%V%i%s%IAOB$6I=1B(B - <a class=3D"issue tracker-266 stat=
+us-1 priority-2 priority-default overdue child behind-schedule assigned-to-=
+me" href=3D"https://fujiyama.cloud.redmine.jp/issues/16178" style=3D"color:=
+#169">
+=1B$B<B6HL3=1B(B #16178</a>: =1B$BKL6e=3D#;T$NJ82=3D:b$K4X$9$k;vA0GD0.;Y1g=
+=1B(B (32=1B$BF|=1B(B =1B$BCY$l=1B(B)</li><li>20250711_=1B$BKL6e=3D#;TJ82=
+=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=3D#;TET;T%V%i%s%IAOB$6I=1B(B - <a =
+class=3D"issue tracker-266 status-1 priority-2 priority-default overdue chi=
+ld behind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.j=
+p/issues/16179" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #16179</a>: =1B$B;T$N35MW5Z$S;T$NJ82=3D:b$N35MW$N:n@.=1B(B=
+ (32=1B$BF|=1B(B =1B$BCY$l=1B(B)</li><li>20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]=
+B83hMQD4::;Y1g6HL3=1B(B_=1B$BKL6e=3D#;TET;T%V%i%s%IAOB$6I=1B(B - <a class=
+=3D"issue tracker-266 status-1 priority-2 priority-default overdue child be=
+hind-schedule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/iss=
+ues/16180" style=3D"color:#169">
+=1B$B<B6HL3=1B(B #16180</a>: =1B$BL$;XDjJ82=3D:b%j%9%H:n@.;Y1g=1B(B (32=1B$=
+BF|=1B(B =1B$BCY$l=1B(B)</li><li>20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4=
+::;Y1g6HL3=1B(B_=1B$BKL6e=3D#;TET;T%V%i%s%IAOB$6I=1B(B - <a class=3D"issue =
+tracker-266 status-1 priority-2 priority-default overdue child behind-sched=
+ule assigned-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/16181"=
+ style=3D"color:#169">
+=1B$B<B6HL3=1B(B #16181</a>: =1B$B6(5D2q$N1?1D;Y1g=1B(B (32=1B$BF|=1B(B =1B=
+$BCY$l=1B(B)</li><li>20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=
+=1B(B_=1B$BKL6e=3D#;TET;T%V%i%s%IAOB$6I=1B(B - <a class=3D"issue tracker-26=
+6 status-1 priority-2 priority-default overdue child behind-schedule assign=
+ed-to-me" href=3D"https://fujiyama.cloud.redmine.jp/issues/16182" style=3D"=
+color:#169">
+=1B$B<B6HL3=1B(B #16182</a>: =1B$BBG9g$;6(5D=1B(B (32=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li><li>20250711_=1B$BKL6e=3D#;TJ82=3D:bJ]B83hMQD4::;Y1g6HL3=1B(B_=
+=1B$BKL6e=3D#;TET;T%V%i%s%IAOB$6I=1B(B - <a class=3D"issue tracker-266 stat=
+us-1 priority-2 priority-default overdue child behind-schedule assigned-to-=
+me" href=3D"https://fujiyama.cloud.redmine.jp/issues/16183" style=3D"color:=
+#169">
+=1B$B<B6HL3=1B(B #16183</a>: =1B$BG<IJ=3D`Hw=1B(B (32=1B$BF|=1B(B =1B$BCY$l=
+=1B(B)</li></ul>
+<p><a href=3D"https://fujiyama.cloud.redmine.jp/issues?assigned_to_id=3Dme&=
+amp;set_filter=3D1&amp;sort=3Ddue_date%3Aasc" style=3D"color:#169">=1B$B$9$=
+Y$F$N%?%9%/$rI=3D<(=1B(B</a> (75=1B$B7oL$40N;=1B(B)</p>
+<hr style=3D"width:100%; height:1px; background:#ccc; border:0; margin:1.2e=
+m 0">
+<span class=3D"footer" style=3D"font-size:0.8em; font-style:italic">
+<p>My Redmine=1B$B$+$iAw?.=1B(B - <a href=3D"https://hosting.redmine.jp/" c=
+lass=3D"external" style=3D"color:#169">
+https://hosting.redmine.jp/</a><br>
+=1B$B%W%m%8%'%/%H4IM}%=3D%U%H%&%'%"=1B(BRedmine=1B$B$N%/%i%&%I%5!<%S%9=1B(B=
+</p>
+</span></div>
+</body>
+</html>
+
+--_000_7adb34b2fb594970b2deb86b21f498c4OS3P301MB0082JPNP301PRO_--

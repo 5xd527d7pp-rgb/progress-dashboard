@@ -51,10 +51,12 @@ function harmonizeBusinessIdentity(tasks) {
       target.includes(normalizeNameForMatch(item.keyword))
     );
     if (!alias) return task;
+    const businessId = alias.businessId;
     return {
       ...task,
-      businessId: alias.businessId,
-      businessName: alias.businessName
+      businessId,
+      businessName: alias.businessName,
+      assignee: BUSINESS_ASSIGNEES[businessId] || '未設定'
     };
   });
 }
@@ -114,9 +116,26 @@ function buildRoutineTasks(events) {
       continue;
     }
 
-    const dueDate = addDays(eventDate, ROUTINE_SUBMISSION_DEADLINE_DAYS);
-    const responseDueAt = formatIsoLocal(dueDate, DEFAULT_CLIENT_DEADLINE_HOUR);
-    const returnAt = formatIsoLocal(addDays(dueDate, -1), DEFAULT_CLIENT_DEADLINE_HOUR);
+    let responseDueAt;
+    let returnAt;
+    let clientDueAt;
+
+    if (event.eventType === 'kickoff_meeting') {
+      const dueBase = event.clientDocumentDueAt
+        ? toDate(event.clientDocumentDueAt)
+        : addDays(eventDate, -1);
+      if (!dueBase) {
+        continue;
+      }
+      responseDueAt = formatIsoLocal(dueBase, DEFAULT_CLIENT_DEADLINE_HOUR);
+      returnAt = formatIsoLocal(addDays(dueBase, -1), '15:00');
+      clientDueAt = responseDueAt;
+    } else {
+      const dueDate = addDays(eventDate, ROUTINE_SUBMISSION_DEADLINE_DAYS);
+      responseDueAt = formatIsoLocal(dueDate, DEFAULT_CLIENT_DEADLINE_HOUR);
+      returnAt = formatIsoLocal(addDays(dueDate, -1), DEFAULT_CLIENT_DEADLINE_HOUR);
+      clientDueAt = responseDueAt;
+    }
 
     for (const template of templates) {
       routineTasks.push(normalizeTask({
@@ -129,7 +148,7 @@ function buildRoutineTasks(events) {
         submittedAt: null,
         responseDueAt,
         returnAt,
-        clientDueAt: responseDueAt,
+        clientDueAt,
         eventName: event.eventName,
         eventDate: event.eventDate
       }, 'routine'));
@@ -139,33 +158,67 @@ function buildRoutineTasks(events) {
   return routineTasks.filter(Boolean);
 }
 
-function isSameDay(isoA, isoB) {
-  const a = toDate(isoA);
-  const b = toDate(isoB);
-  if (!a || !b) return false;
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
+function normalizeDedupeContent(content) {
+  return String(content || '')
+    .normalize('NFKC')
+    .replace(/\s+/g, ' ')
+    .replace(/[。．]+$/g, '')
+    .trim();
 }
 
+function mergeTasksPreferringDates(a, b) {
+  const score = t =>
+    (t.clientDueAt ? 4 : 0) + (t.responseDueAt ? 2 : 0) + (t.submittedAt ? 1 : 0);
+  if (score(b) > score(a)) return b;
+  if (score(a) > score(b)) return a;
+  return normalizeDedupeContent(a.content).length >= normalizeDedupeContent(b.content).length ? a : b;
+}
+
+/**
+ * 同一 businessId・同一本文（正規化）を1件に。日付が取れている行を優先。
+ * 打合せは、長い行が短い行を内容包含する場合は短い行を捨てる（総論と各論の重複軽減）。
+ */
 function dedupeTasks(tasks) {
-  const unique = [];
-
+  const map = new Map();
   for (const task of tasks) {
-    const duplicate = unique.find(existing =>
-      existing.businessId === task.businessId &&
-      existing.content === task.content &&
-      isSameDay(existing.responseDueAt, task.responseDueAt)
-    );
-
-    if (!duplicate) {
-      unique.push(task);
+    const key = `${task.businessId}::${normalizeDedupeContent(task.content)}`;
+    const existing = map.get(key);
+    if (!existing) {
+      map.set(key, task);
+      continue;
     }
+    map.set(key, mergeTasksPreferringDates(existing, task));
   }
 
-  return unique;
+  let list = Array.from(map.values());
+
+  const nonMeeting = list.filter(t => t.sourceType !== 'meeting');
+  const meeting = list.filter(t => t.sourceType === 'meeting');
+  const byBiz = new Map();
+  for (const t of meeting) {
+    if (!byBiz.has(t.businessId)) byBiz.set(t.businessId, []);
+    byBiz.get(t.businessId).push(t);
+  }
+
+  const meetingDeduped = [];
+  for (const group of byBiz.values()) {
+    const sorted = [...group].sort(
+      (a, b) => normalizeDedupeContent(b.content).length - normalizeDedupeContent(a.content).length
+    );
+    const kept = [];
+    for (const task of sorted) {
+      const n = normalizeDedupeContent(task.content);
+      const redundant = kept.some(big => {
+        const bn = normalizeDedupeContent(big.content);
+        return bn.includes(n) && bn.length > n.length + 12;
+      });
+      if (redundant) continue;
+      kept.push(task);
+    }
+    meetingDeduped.push(...kept);
+  }
+
+  return [...nonMeeting, ...meetingDeduped];
 }
 
 function assignSerialNumbers(tasks) {
@@ -236,9 +289,17 @@ function buildBusinessSummaries(tasks, events) {
       }
     }
 
+    const primaryEvent =
+      latestByType.review_committee ||
+      latestByType.bunkacho_consultation ||
+      latestByType.kickoff_meeting ||
+      null;
+
     return {
       ...item,
       latestEvents: latestByType,
+      meetingHeldAt: primaryEvent?.eventDate || null,
+      eventClientDocumentDueAt: primaryEvent?.clientDocumentDueAt || null,
       tasks: item.tasks.sort((a, b) => {
         const aDate = toDate(a.responseDueAt)?.getTime() || Number.MAX_SAFE_INTEGER;
         const bDate = toDate(b.responseDueAt)?.getTime() || Number.MAX_SAFE_INTEGER;

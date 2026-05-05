@@ -73,6 +73,8 @@ jobs:
           TODO_REPORT_MAIL_IMAP_MAILBOX: ${{ secrets.TODO_REPORT_MAIL_IMAP_MAILBOX }}
           TODO_REPORT_MAIL_IMAP_FETCH_LIMIT: ${{ secrets.TODO_REPORT_MAIL_IMAP_FETCH_LIMIT }}
           TODO_REPORT_MAIL_IMAP_LOOKBACK_DAYS: ${{ secrets.TODO_REPORT_MAIL_IMAP_LOOKBACK_DAYS }}
+          TODO_REPORT_DROPBOX_ACCESS_TOKEN: ${{ secrets.TODO_REPORT_DROPBOX_ACCESS_TOKEN }}
+          TODO_REPORT_DROPBOX_MEETING_PATH: ${{ secrets.TODO_REPORT_DROPBOX_MEETING_PATH }}
 
       - run: npm run run-todo-report:preview
         if: github.event_name == 'workflow_dispatch' && inputs.mode == 'preview'
@@ -92,6 +94,8 @@ jobs:
           TODO_REPORT_MAIL_IMAP_MAILBOX: ${{ secrets.TODO_REPORT_MAIL_IMAP_MAILBOX }}
           TODO_REPORT_MAIL_IMAP_FETCH_LIMIT: ${{ secrets.TODO_REPORT_MAIL_IMAP_FETCH_LIMIT }}
           TODO_REPORT_MAIL_IMAP_LOOKBACK_DAYS: ${{ secrets.TODO_REPORT_MAIL_IMAP_LOOKBACK_DAYS }}
+          TODO_REPORT_DROPBOX_ACCESS_TOKEN: ${{ secrets.TODO_REPORT_DROPBOX_ACCESS_TOKEN }}
+          TODO_REPORT_DROPBOX_MEETING_PATH: ${{ secrets.TODO_REPORT_DROPBOX_MEETING_PATH }}
 
       - name: Upload generated todo report
         uses: actions/upload-artifact@v4

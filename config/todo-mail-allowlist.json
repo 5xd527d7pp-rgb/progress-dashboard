@@ -1,0 +1,19 @@
+{
+  "description": "会社メールを Mac（iCloud 受信箱）に全件転送しても、Todo パイプラインが扱うのはこの一覧のアドレスだけ。fetch-todo-mails-imap は Envelope の From / Reply-To / Sender のいずれかが一致したメールのみ data/todo-input/mails/ に .eml 保存し、analyze-todo-sources はそのフォルダのみ読む。",
+  "addresses": [
+    "bunkazai@city.shijonawate.lg.jp",
+    "nakoku@city.kasuga.fukuoka.jp",
+    "hirokazu_kominami01@city.kitakyushu.lg.jp",
+    "syakaik@town.komono.mie.jp",
+    "bunka@city.kakamigahara.gifu.jp",
+    "hideyoshi_inaya@city.awaji.lg.jp",
+    "imashioya-takeyuki@pref.miyazaki.lg.jp",
+    "utsumi@town.kikuyo.lg.jp",
+    "kyoiku-g@town.tomika.gifu.jp",
+    "bunkazai_s@city.sakuragawa.lg.jp",
+    "a-hasegawa@con-fujiyama.com",
+    "n-hasegawa@con-fujiyama.com",
+    "ko-watanabe@con-fujiyama.com",
+    "s-nakajima@con-fujiyama.com"
+  ]
+}

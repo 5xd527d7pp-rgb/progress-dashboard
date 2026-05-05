@@ -394,6 +394,8 @@ npm run post-slack          # ⑦だけ実行
 フォーム連携時は、CSV出力を `data/todo-sources/raw-phone-log.csv` と同じヘッダー形式にそろえて取り込みます。  
 `TODO_REPORT_PHONE_LOG_CSV_URL` を設定すると、`npm run sync-phone-log` でURLからCSVを自動同期できます（Googleスプレッドシート公開CSV URLなど）。
 
+打合せ簿を会社の Dropbox に置く場合は、`TODO_REPORT_DROPBOX_ACCESS_TOKEN` と `TODO_REPORT_DROPBOX_MEETING_PATH` を設定すると `npm run sync-meeting-docs-dropbox`（`run-todo-report` に組込み済み）で GitHub Actions からも取得できます。詳細は `data/todo-input/README.md` を参照してください。
+
 ### ルーティンタスク自動生成
 
 `business-events.json` で会議実施を検知したら、以下を必ず追加します（期限は実施日 + 7日）。
@@ -462,11 +464,25 @@ GitHub の `Settings -> Secrets and variables -> Actions` で以下を追加し�
 推奨:
 
 - `TODO_REPORT_PHONE_LOG_CSV_URL`（Googleフォーム回答CSVの公開URL）
+- `TODO_REPORT_DROPBOX_ACCESS_TOKEN` / `TODO_REPORT_DROPBOX_MEETING_PATH`（打合せ簿を Dropbox から同期する場合。Mac 不要で CI から取得可）
 - `TODO_REPORT_SURGE_DOMAIN`
 - `TODO_REPORT_SURGE_LOGIN`
 - `TODO_REPORT_SURGE_TOKEN`
 - `TODO_REPORT_PUBLIC_URL`
 - `TODO_REPORT_FAIL_ON_WARNINGS`（`1` で警告時に失敗）
+
+メール巡回（IMAP。`run-todo-report` 内の `fetch-todo-mails:imap` 用。ローカルの `.env` と同じ値を登録）:
+
+- `TODO_REPORT_MAIL_IMAP_HOST`
+- `TODO_REPORT_MAIL_IMAP_PORT`（例: `993`）
+- `TODO_REPORT_MAIL_IMAP_SECURE`（例: `1`）
+- `TODO_REPORT_MAIL_IMAP_USER`
+- `TODO_REPORT_MAIL_IMAP_PASS`
+- `TODO_REPORT_MAIL_IMAP_MAILBOX`（省略時は多くの環境で `INBOX`）
+- `TODO_REPORT_MAIL_IMAP_FETCH_LIMIT`（任意）
+- `TODO_REPORT_MAIL_IMAP_LOOKBACK_DAYS`（任意）
+
+Surge のログインが別キーのときは、ワークフローが参照する `MAGAZINE_SURGE_LOGIN` / `MAGAZINE_SURGE_TOKEN` / `MAGAZINE_SURGE_DOMAIN` も設定してください。
 
 まずは `Actions -> Todoレポート自動配信 -> Run workflow` で `mode=preview` を実行し、問題なければ `mode=production` で確認する運用が安全です。
 

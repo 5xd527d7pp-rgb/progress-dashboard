@@ -1,3 +1,22 @@
 {
-  "items": []
+  "items": [
+    {
+      "eventId": "20260132-fy2026-kickoff",
+      "businessId": "20260132",
+      "businessName": "日高市文化財保存活用地域計画作成支援業務",
+      "eventType": "kickoff_meeting",
+      "eventName": "本年度の初回打合せ",
+      "eventDate": "2026-05-21T13:00:00+09:00",
+      "clientDocumentDueAt": "2026-05-20T18:00:00+09:00"
+    },
+    {
+      "eventId": "20250504-fy2026-kickoff",
+      "businessId": "20250504",
+      "businessName": "令和８年度名勝地総合調査業務委託",
+      "eventType": "kickoff_meeting",
+      "eventName": "初回打合せ",
+      "eventDate": "2026-05-21T13:00:00+09:00",
+      "clientDocumentDueAt": "2026-05-20T18:00:00+09:00"
+    }
+  ]
 }

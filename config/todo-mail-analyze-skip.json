@@ -1,0 +1,20 @@
+{
+  "description": "件名・本文のいずれかに一致したらタスク化しない。LayerX/バクラクのシステム通知、社内配信の研修案内など。",
+  "subjectContains": [
+    "件のタスクの期日が7日以内",
+    "Your issues due soon",
+    "issue(s) due",
+    "[Linear]",
+    "マジソンブッシュのためのリマインダー",
+    "Digest:",
+    "まとめて送信",
+    "Microsoft Teams",
+    "アクティビティのサマリー",
+    "新しい環境からログイン",
+    "5/20応募〆",
+    "助成金で実質5万円"
+  ],
+  "bodyContains": [
+    "bakuraku-id.layerx.jp/hc/ja/articles/35472589708825"
+  ]
+}

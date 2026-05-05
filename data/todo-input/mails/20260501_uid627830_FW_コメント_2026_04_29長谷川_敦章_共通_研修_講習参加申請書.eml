@@ -1,0 +1,519 @@
+Return-path: <a-hasegawa@con-fujiyama.com>
+Original-recipient: rfc822;atsunori52@me.com
+Received: from p00-icloudmta-smtpin-us-west-3a-60-percent-2 by p111-mailgateway-smtp-7fdcf88f5b-qx4b9 (mailgateway 2616B129)
+	with SMTP id 78955da9-e560-453d-8e68-eb6c36903a38 
+	for <atsunori52@me.com>; Fri, 1 May 2026 02:18:32 GMT
+X-ICLOUD-MAIL-BWL: 1
+X-Apple-MoveToFolder: INBOX 
+X-Apple-Action: WL/INBOX
+X-Apple-UUID: 78955da9-e560-453d-8e68-eb6c36903a38
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11020108.outbound.protection.outlook.com [52.101.229.108])
+	by p00-icloudmta-smtpin-us-west-3a-60-percent-2 (Postfix) with ESMTPS id 56FF2C0010C
+	for <atsunori52@me.com>; Fri, 01 May 2026 02:18:28 +0000 (UTC)
+X-ICL-Info: GAtbRVYDBVBFSlVESgMFUFUKE0oWX1gHVQoPB0UFBExESVdZSgIPTERJXlcdVAsDWBEHBB1XVxUUOQUYFh1QFx8QHxYVURgBGhRGERwNVQ0bVAACEllPAxgYSBQXXRYQFkQHAwtFWA0HEFNFOF1TTBYWC1cQVVoNSC0/RCgCDlQ2LFZHSh5ZFwEbCQIWVBgSBxYSEhtEXw0bVwkCDFxZDR5XBRgVEEYWB0QLFhFcGwgUCQcZHVFFFhQDCRlJAQZQRUhWT1ZfQxYXFhMZHB5GEBoNAxQMWVkMWxYTAxRfWQlbGgkaWFRSXxMMDB4BUVsDRk9TWRdeWwsWCwkEF1ZCTBYWC1cVWVJfSRpWR04HAAATTlBAHgRUVRMYBEVPVgdTF08HRxoGAQMROTIuO2AFUkQ0JEdICQNMPykoJ0sAB0wlKykzVn9jNjk2KTxWc3kvSw==
+X-ICL-Score: 2.33203332332
+Authentication-Results: bimi.icloud.com; bimi=skipped reason="insufficient dmarc"
+X-ARC-Info: policy=pass; arc=pass; id=mx.microsoft.com 1; r1=1; r2=1
+Authentication-Results: arc.icloud.com; arc=pass
+Authentication-Results: dmarc.icloud.com; dmarc=none header.from=con-fujiyama.com
+X-DMARC-Policy: none
+X-DMARC-Info: pass=none; dmarc-policy=(nopolicy); s=u0; d=u0; pdomain=con-fujiyama.com
+Authentication-Results: dkim-verifier.icloud.com; dkim=pass header.d=fujiyama365.onmicrosoft.com header.i=@fujiyama365.onmicrosoft.com header.b=KM0hCOae
+Received-SPF: pass (spf.icloud.com: domain of a-hasegawa@con-fujiyama.com designates 52.101.229.108 as permitted sender) receiver=spf.icloud.com; client-ip=52.101.229.108; helo=TY3P286CU002.outbound.protection.outlook.com; envelope-from=a-hasegawa@con-fujiyama.com
+Authentication-Results: spf.icloud.com; spf=pass (spf.icloud.com: domain of a-hasegawa@con-fujiyama.com designates 52.101.229.108 as permitted sender) smtp.mailfrom=a-hasegawa@con-fujiyama.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cXogIbCG5oEp/ECYpUUDPfokxlwLix9J8/woQKhz18TpGS47kFW1eMbiBpgWVGNf6Ah84uhzC8keHTrWeLM+jJawNu/B/3WqZhArrZWEPiI0NgvjKK8QdSpmzfb56BJaSVzQtChgOLeRmn0GK2e/CpbM2Xtneug2F36CA0w6tIiaOFlqyKrSCeJubPOD4Zn4qguSZezfJJtZu3f1nvk/8RVUwVQ21N+JjTis5aBwtZ5a4BWyQw8lA+gWLAf1aKIwVl9jtXd3CkTUZlEwuH30zpB6WOg01xvRBL1BUWLL6A+dXvUJNBVnYeQNRgNmt8S7Pzu4IgMksLAOfbdx8+10zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JhxKgWZQc/JEGIuYNodalOtqTt6wE4jaP9vnv9uzQTY=;
+ b=Hh+/zd9FhP0meiyuLFU+0hu5Ugs/K3s1nytVyhP9k3Wx2GiiOjOZ5dU0Nclbd+8dpIqP7jEt+/CcSY1SyRQGS8X3xoqsy52HOVTL85CduJTKQBMdsYEALGY0gibUcpPif9d6ovYMU5UOOX/53VONud6BHMimhm4XIvhtbSZosUlPU4TUm29KC2G1XtKyF/G2pzhGUzAfiWBuPQ68V/6Oen5Usgnei7L9HcLTtSFtEz35i7Rm09dDa+ztZQCGfs04tu7UNTZ8y0DW5tvbGKbhb+jvZDEx0E+bdJ3BylQ0PShCGfGnqZdVzEqYPnCTQySs6eWX1dy8Wd1X4eCL3twlLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=con-fujiyama.com; dmarc=pass action=none
+ header.from=con-fujiyama.com; dkim=pass header.d=con-fujiyama.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujiyama365.onmicrosoft.com; s=selector2-fujiyama365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JhxKgWZQc/JEGIuYNodalOtqTt6wE4jaP9vnv9uzQTY=;
+ b=KM0hCOaeb98ZFWcGIOMxtCasUrntruSUuw/pqGZdm6pe7OS5c5ktBLvidyn+v0Tv3wYv5DB1AwWqPomCYhgX75o41DUPYTdyKUfaEaIGyHV/+LYdXhtC/1dIk4ZJwkAwb8ltkKtG1b7q5sYEaV23piLj3ZOos5TqYacT3VigA3Q=
+Received: from TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM (2603:1096:400:2c5::5)
+ by OS3P301MB0278.JPNP301.PROD.OUTLOOK.COM (2603:1096:604:205::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.22; Fri, 1 May
+ 2026 02:18:22 +0000
+Received: from TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM ([::1]) by
+ TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM ([fe80::ad8f:416e:3f0a:3d74%5]) with
+ Microsoft SMTP Server id 15.20.9870.022; Fri, 1 May 2026 02:18:22 +0000
+From: =?iso-2022-jp?B?GyRCRDlDK0BuGyhCICAbJEJGWD5PGyhC?=
+	<a-hasegawa@con-fujiyama.com>
+To: "atsunori52@me.com" <atsunori52@me.com>
+Subject:
+ =?iso-2022-jp?B?Rlc6IBskQiUzJWElcyVIGyhCOiAyMDI2LzA0LzI5GyRCRDlDK0BuGyhC?=
+ =?iso-2022-jp?B?GyRCISFGWD5PIVo2JkRMIVs4Jj0kGyhCLxskQjlWPSw7MjJDPz0bKEI=?=
+ =?iso-2022-jp?B?GyRCQEE9cRsoQg==?=
+Thread-Topic:
+ =?iso-2022-jp?B?GyRCJTMlYSVzJUgbKEI6IDIwMjYvMDQvMjkbJEJEOUMrQG4hIUZYGyhC?=
+ =?iso-2022-jp?B?GyRCPk8hWjYmREwhWzgmPSQbKEIvGyRCOVY9LDsyMkM/PUBBPXEbKEI=?=
+Thread-Index: AQHc2RDIZpbawR6B8ESKSMCogviMJLX4b2/z
+Date: Fri, 1 May 2026 02:18:22 +0000
+Message-ID:
+ <c00676bf767f4b7fab27f11b6a0b67ad@TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM>
+References: <lLgHB5ErTxiiCYF32AMpNg@geopod-ismtpd-4>
+In-Reply-To: <lLgHB5ErTxiiCYF32AMpNg@geopod-ismtpd-4>
+X-MS-Has-Attach:
+X-MS-Exchange-Inbox-Rules-Loop: a-hasegawa@con-fujiyama.com
+X-MS-TNEF-Correlator:
+x-ms-exchange-parent-message-id: <lLgHB5ErTxiiCYF32AMpNg@geopod-ismtpd-4>
+auto-submitted: auto-generated
+x-ms-exchange-generated-message-source: Mailbox Rules Agent
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCP301MB0095:EE_|OS3P301MB0278:EE_
+x-ms-office365-filtering-correlation-id: eb02e089-ebc0-4b5e-ff4b-08dea727eb2d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|3109299003|376014|10070799003|69100299015|1800799024|7049299003|42112799006|366016|18002099003|8096899003|56012099003|22082099003;
+x-microsoft-antispam-message-info:
+ dIaK4rYk9Bmf/rZ5DPQUd2ZUPCpfOxbuFqN1bvYG9YMbSyMqvinkuiHpY3ksdp7FA+Or3sZNY8H2u3szu/TQnl5+WkZRjNt5yH+h2mEN1H56pnodILUJ9p0BcrI0l17qEurfiFchGR3eDBgN8mFSBN1R5nxISed8JF/Fzu1RVFk3ihq6ChVZuT4keX8abf/s4gsQPWgsMSUKAX+RzVnFPnI5ps88XVDkh+xJJu8bWweMuNqiBKlRXz4L+CmHKlzo33tUXDyk/t/uVPCmwe4eNWysAW84xShM6edNCqCBX98bb8/U3AWrHL0qjheizTYGyFkpI26RVnPKrbA0Wh8cX3jwIqPknTEeWmrNesRpR0seAr2xESlCO1xedWB6hqx+SB5lJKPC/uARabflYsL5+5V2ixHh5Cr5CjgA2cwjAUHwFDa6eQPRdSnjpXPXG778Qi3w6sfNM4RE0O+b/fHBvgmr/PsoDpEcHktt2/ZnBObqZZBlO95mJi7GBfRRw+WuXuFPVFSmObux9B7e7mrELQak+Hkdfa2K/Mp5rLrLsXTISGW4K4iOdIq5lPK98KcGYwLxpeJpOceE6fPO/g/CBk6QYy8L8qOYcT3U4r2idH1uiAO04KSv9GO7NIDFkY4oc+/aG2zspN3agE3dCBXTGQ==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(3109299003)(376014)(10070799003)(69100299015)(1800799024)(7049299003)(42112799006)(366016)(18002099003)(8096899003)(56012099003)(22082099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ ex6g9u4n/TbmkzR95KslOgoo2r8AfvxjCZ5GnLP0xQl2kP3ywoUOZCV6EDgl+0yi2cMznVMSKK8kkzFjd7WaJo8nCueKHxCznSCXSUH2dynA3YEGfpn4f9PQfvrxCXW33oUeVv1pZrXfWvbDQzoq4TmAbyKsRgyKD1V8aNrRq834qv2AH7KqMa3To9lo95ZweMa1qx9se6emlfsDIfY0UdsMr97M8JqRPo+dS1r4zQL2+FIb11Dp8j72xh9c8q11cSbwqb3lXI0oymkrWlOexaHEGDGGJxFYjGcb3B2UWQyM1vzCQMmMWFHwTEB3wyda6W/cpPVVQlayYJvTlDzA8A6PhVjq1u1Zf32LiD8rhFREaIbYYaYwTkx4QMA5tnUSjgC2eP1fTKgd20XrmWHfF7To4T3MSwmmAKTE8i0slLldjfdyHr2CKajPgZy4ZZ31
+Content-Type: multipart/alternative;
+	boundary="_000_c00676bf767f4b7fab27f11b6a0b67adTYCP301MB0095JPNP301PRO_"
+MIME-Version: 1.0
+X-OriginatorOrg: con-fujiyama.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb02e089-ebc0-4b5e-ff4b-08dea727eb2d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 May 2026 02:18:22.4268
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7e2f0ccd-d175-41d1-a153-31c2a2f59ee9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P301MB0278
+X-MANTSH: 1TFkXGxoaGhEKWUQXaUEYXU5tc2tCBV8RCllNF3pPWFlFREtGa0ZGRV0RCl9ZFxg
+ fGhEKX00XZEVETxEKWUkXGnEaEBp3BhgZGnEbExIQGncGGBoGGhEKWV4XaG55EQpDThdcHUFFG
+ XJzfhwSYkNrQX5nGU8TckJHGHBEE1xrYFMfHBEKWFwXGQQaBB8SBRsaGgQSGAQeGAQZGhAbHho
+ fGhEKXlkXQmFIY3sRCk1cFwcSGREKTFoXe2lNTWsRCkVZF3trEQpMXxd6BQUFBQUFBQUFQxEKT
+ EYXb01rY2xNaxEKQ1oXHxgEGxobBBgYEwQbGhIRCkJeFxsRCkReFxgRCkJFF21+c2ATbUdTZW0
+ dEQpCThdkAWNgXngYSXtAHBEKQkwXaWV7AW96ZWxIUm8RCkJsF2AFU1NzRHpAXVNuEQpCQBdna
+ UFfZXxIckZTbBEKQlgXaF5NaW5ef0tgXwURCkJ4F3oFYm9yTGtrG1NEEQpNXhcbEQpwaBdlQVx
+ BE0BiU35BQBAZGhEKcGgXZntZZXgeeHhnaR4QGhEKcGgXbE1rfRIYfEQSGBgQGRoRCnBoF2ZbR
+ xNja0xfbm58EBoRCnBoF2dASVAaZhtufU96EBoRCnBoF2xGZHBzHhxLek1IEBoRCnBoF2dTHW1
+ CaGgSTkxAEBkaEQpwaBdmfmxob2gfY2VASBAZGhEKcGwXZFp5WGkZaBJMRxsQHhIRCm1+FxsRC
+ lhNF0sR
+X-Proofpoint-GUID: v7ko3XYT68HiAkTM3e9Xhm2Zn9vAJy56
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTAxMDAyMCBTYWx0ZWRfX9XdyYGIFXZjL
+ SC5JoVVnBVqxECIE8V/+bJxE/0tuCP+MTSPlN8xPGxmgp8wxde0JLHydD0bp6vDBHqd/U7PKPAy
+ hQ/sqCSwP6G8uWrAYgS9un5Yjk6IMIrs4k6odaqRNeiEr2OP5ZNMaRNBo8vmG15vTf/3V85aU4o
+ 0jCEoXa5uIT64hbtiVaPTfGsn3WwulDgrj/RGzE8U5Dx2YiwROJq1JD/BruzmWCDIR3H6r6I8hD
+ LRnmp2/CV/aXgXup7QfTU+1NMa3dPMxZpMyxnWkUk/6am8S8K3gD8yNw6i/czMS6W5SEAuczNez
+ PVT9tQSDIrIQXDrHqUnqTOuAjSKU/gbV1+rK0ENPg==
+X-Proofpoint-ORIG-GUID: v7ko3XYT68HiAkTM3e9Xhm2Zn9vAJy56
+X-JNJ: AAAAAAABQ2UtWxfVvpnfdSAa0Uzxz6CWM+qiSM2opuYGRwmWicpWbHxOh7OueExrxJBzcD5rjcYuwvRSPDoW/ASSMpvpsFQfhCYBcsEjWxYIhFRvVzgSGBIurh4v9eO60VXZ8CIqy17aLmZRndV/loUe95ysvsij6cvknq75n5OEarBcoHW5E900/S8XsFh84YDJP0hiL7oBOJiWoloMhHaNMFlINTcy0O+tTsOQJN/oBqBzjIrZ/Kca5YVvarozY8teCgKVum6Wp4C7jJ02h+GBG4NmAZTTonZ/t4vkoCqwSY8G+BpIpUw788BZVGadadEoCnU/nRdz71XMvtPpIH2GJODa1WsSyCDmWDAS+lOpVe6nl7C+P0xjh9TjIqRmWwSVBmKN+QBGn+/+wllYiznUzjLzokVI8jnqAP+xkwTsbyvZq0UJxIsowhosn3RCbUKbhf6jIRzLAFWdxBRMvBAGRtLv66C03p4mPVAYUOzp4I/zOoTVdKN5eS0VzLe73D0oclbnTKIDjq5jspGfwak+xD+w+skKOO3RrmpPnKN4d72BVrFjuuXqUUKNGUwa38+XmMYIcdJzM7cDf0k9MrYbSQ22bGJmdpxLYwQr2pVXQ4908VC1kqKn3Tb/8aVQCsEERZAMvnS9i+xJFNNMm01YHc6Bo5QyxlP26GYyPzUSI+JOeBgk5/8NpxpDsgSqeCXc4KxJ6+lYqzTBTjbtwC8WLv+9iCeK6bf+AmvSok2cA9qoA7Ywv7fCfiI4n/CjmaGvbm3SFKVbZufRtqPPKaF8MPwpPVSAGJV8VESTR6F/XYwxY/1h+4VpHUdaOZ7+d7E3B4huE6SuE4yVsJLSe4t1/NfkoNFFsvYW9tPRw+1izJVAr5ycF6FoIbOOg8SHldMVnSuWeTJ19sDOLHmF3HhaqtoA6QmDuM1rGIsoHk3b/xnek9Z5FnvcoZ6463Hf4bhsFiEzWQVr2gjWiMnDJXwN2A5VMCkFXTNVFt/aQQ==
+
+--_000_c00676bf767f4b7fab27f11b6a0b67adTYCP301MB0095JPNP301PRO_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+
+________________________________
+=1B$B:9=3DP?M=1B(B: =1B$B%P%/%i%/?=3D@A!&7PHq@:;;=1B(B <no-reply@workflow.l=
+ayerx.jp>
+=1B$BAw?.F|;~=1B(B: 2026=1B$BG/=1B(B5=1B$B7n=1B(B1=1B$BF|6bMKF|=1B(B 11:18:=
+17 (UTC+09:00) Osaka, Sapporo, Tokyo
+=1B$B08@h=1B(B: =1B$BD9C+@n=1B(B =1B$BFX>O=1B(B <a-hasegawa@con-fujiyama.co=
+m>
+=1B$B7oL>=1B(B: =1B$B%3%a%s%H=1B(B: 2026/04/29=1B$BD9C+@n!!FX>O!Z6&DL![8&=
+=3D$=1B(B/=1B$B9V=3D,;22C?=3D@A=3Dq=1B(B
+
+
+[http://cdn.mcauto-images-production.sendgrid.net/1f7ee69a19709662/dae15a31=
+-8e3c-4de7-8926-5ed600eb0378/588x104.png]
+=1B$B3t<02q<R%U%8%d%^=1B(B
+=1B$BD9C+@n!!FX>O=1B(B =1B$BMM=1B(B
+
+=1B$B?=3D@A$K%3%a%s%H$,DI2C$5$l$^$7$?!#=1B(B
+=1B$B?=3D@AFbMF=1B(B
+=1B$B?=3D@A<T=1B(B     =1B$BD9C+@n!!FX>O=1B(B
+=1B$B%?%$%H%k=1B(B    2026/04/29=1B$BD9C+@n!!FX>O!Z6&DL![8&=3D$=1B(B/=1B$B9=
+V=3D,;22C?=3D@A=3Dq=1B(B
+=1B$B%9%F!<%?%9=1B(B   =1B$B?J9TCf=1B(B
+=1B$B?=3D@A$N<oN`=1B(B   =1B$B!Z6&DL![8&=3D$=1B(B/=1B$B9V=3D,;22C?=3D@A=3Dq=
+=1B(B
+=1B$B?=3D@A=1B(BNo    40356
+=1B$B%3%a%s%H=1B(B
+=1B$B%3%a%s%H5-:\<T=1B(B =1B$B6aF#!!9/9@=1B(B
+=1B$B%3%a%s%HFbMF=1B(B
+
+=1B$BJ82=3D:b$NJ]B83hMQ$K$*$1$kCN8+$rF@$k$3$H$,$G$-!":#EY$N6HL3$KLrN)$F$k$3=
+$H$,4|BT$G$-$^$9!#=1B(B
+
+=1B$B>\:Y$O0J2<$N=1B(BURL=1B$B$+$i$43NG'$/$@$5$$!#=1B(B
+
+=1B$B!V=1B(B2026/04/29=1B$BD9C+@n!!FX>O!Z6&DL![8&=3D$=1B(B/=1B$B9V=3D,;22C?=
+=3D@A=3Dq!W$r3NG'$9$k=1B(B<https://workflow.layerx.jp/requests/01KQAJ7JHM9N=
+D3NMZZG38NGS86?tenantId=3Dafe6b475-a83b-4463-aa72-e8d5608195ac&notification=
+_platform=3Demail>
+
+  *   =1B$BK\%a!<%k$OAw?.@lMQ%a!<%k%"%I%l%9$+$iG[?.$5$l$F$$$^$9!#$4JV?.$$$?=
+$@$$$F$b$*1~$($$$?$7$+$M$^$9$N$G!"$4N;>5$/$@$5$$!#=1B(B
+  *   =1B$BK\%a!<%k$NG[?.Dd;_$O%P%/%i%/?=3D@A!&7PHq@:;;$NDLCN@_Dj=1B(B<http=
+s://workflow.layerx.jp/my_notification_setting?tenantId=3Dafe6b475-a83b-446=
+3-aa72-e8d5608195ac&notification_platform=3Demail>=1B$B$K$FJQ99$r$*4j$$$7$^=
+$9!#=1B(B
+
+
+
+--_000_c00676bf767f4b7fab27f11b6a0b67adTYCP301MB0095JPNP301PRO_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html class=3D"sg-campaigns">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D1,=
+ minimum-scale=3D1, maximum-scale=3D1">
+<meta content=3D"IE=3DEdge">
+<style type=3D"text/css">
+<!--
+body, p, div
+	{font-family:inherit;
+	font-size:14px}
+body
+	{color:#000000}
+body a
+	{color:#1188E6;
+	text-decoration:none}
+p
+	{margin:0;
+	padding:0}
+table.wrapper
+	{width:100%!important;
+	table-layout:fixed}
+img.max-width
+	{max-width:100%!important}
+.column.of-2
+	{width:50%}
+.column.of-3
+	{width:33.333%}
+.column.of-4
+	{width:25%}
+ul ul ul ul
+	{list-style-type:disc!important}
+ol ol
+	{list-style-type:lower-roman!important}
+ol ol ol
+	{list-style-type:lower-latin!important}
+ol ol ol ol
+	{list-style-type:decimal!important}
+-->
+</style><style type=3D"text/css">
+<!--
+body, table, td, a
+	{}
+table, td
+	{}
+img
+	{}
+a[x-apple-data-detectors]
+	{font-family:inherit!important;
+	font-size:inherit!important;
+	font-weight:inherit!important;
+	line-height:inherit!important;
+	color:inherit!important;
+	text-decoration:none!important}
+body
+	{width:100%!important;
+	height:100%!important;
+	padding:0!important;
+	margin:0!important}
+table
+	{border-collapse:collapse!important}
+-->
+</style>
+</head>
+<body>
+<strong>
+<div><font face=3D"Tahoma" color=3D"#000000" size=3D"2">&nbsp;</font></div>
+</strong>
+<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
+<font face=3D"Tahoma" size=3D"2"><b>=1B$B:9=3DP?M=1B(B:</b> =1B$B%P%/%i%/?=
+=3D@A!&7PHq@:;;=1B(B &lt;no-reply@workflow.layerx.jp&gt;<br>
+<b>=1B$BAw?.F|;~=1B(B:</b> 2026=1B$BG/=1B(B5=1B$B7n=1B(B1=1B$BF|6bMKF|=1B(B=
+ 11:18:17 (UTC+09:00) Osaka, Sapporo, Tokyo<br>
+<b>=1B$B08@h=1B(B:</b> =1B$BD9C+@n=1B(B =1B$BFX>O=1B(B &lt;a-hasegawa@con-f=
+ujiyama.com&gt;<br>
+<b>=1B$B7oL>=1B(B:</b> =1B$B%3%a%s%H=1B(B: 2026/04/29=1B$BD9C+@n!!FX>O!Z6&D=
+L![8&=3D$=1B(B/=1B$B9V=3D,;22C?=3D@A=3Dq=1B(B<br>
+</font><br>
+<div></div>
+<div>
+<center class=3D"wrapper">
+<div class=3D"webkit">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%" clas=
+s=3D"wrapper" bgcolor=3D"#FFFFFF">
+<tbody>
+<tr>
+<td valign=3D"top" bgcolor=3D"#FFFFFF" width=3D"100%">
+<table width=3D"100%" role=3D"content-container" class=3D"outer" align=3D"c=
+enter" cellpadding=3D"0" cellspacing=3D"0" border=3D"0">
+<tbody>
+<tr>
+<td width=3D"100%">
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" border=3D"0">
+<tbody>
+<tr>
+<td>
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" alig=
+n=3D"center" style=3D"width:100%; max-width:600px">
+<tbody>
+<tr>
+<td role=3D"modules-container" bgcolor=3D"#FFFFFF" width=3D"100%" align=3D"=
+left" style=3D"padding:0px 0px 0px 0px; color:#000000; text-align:left">
+<table class=3D"module preheader preheader-hide" role=3D"module" border=3D"=
+0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"display:none=
+!important; visibility:hidden; opacity:0; color:transparent; height:0; widt=
+h:0">
+<tbody>
+<tr>
+<td role=3D"module-content">
+<p></p>
+</td>
+</tr>
+</tbody>
+</table>
+<table class=3D"wrapper" role=3D"module" border=3D"0" cellpadding=3D"0" cel=
+lspacing=3D"0" width=3D"100%" style=3D"table-layout:fixed">
+<tbody>
+<tr>
+<td valign=3D"top" align=3D"center" style=3D"font-size:6px; line-height:10p=
+x; padding:16px 0px 24px 0px">
+<img class=3D"max-width" border=3D"0" width=3D"360" alt=3D"" src=3D"http://=
+cdn.mcauto-images-production.sendgrid.net/1f7ee69a19709662/dae15a31-8e3c-4d=
+e7-8926-5ed600eb0378/588x104.png" style=3D"display:block; color:#000000; te=
+xt-decoration:none; font-family:Helvetica,arial,sans-serif; font-size:16px;=
+ max-width:60%!important; width:60%; height:auto!important">
+</td>
+</tr>
+</tbody>
+</table>
+<table class=3D"module" role=3D"module" border=3D"0" cellpadding=3D"0" cell=
+spacing=3D"0" width=3D"100%" style=3D"table-layout:fixed">
+<tbody>
+<tr>
+<td height=3D"100%" valign=3D"top" role=3D"module-content">
+<div style=3D"font-family:inherit; text-align:center">=1B$B3t<02q<R%U%8%d%^=
+=1B(B </div>
+<div style=3D"font-family:inherit; text-align:center">=1B$BD9C+@n!!FX>O=1B(=
+B =1B$BMM=1B(B</div>
+<div style=3D"font-family:inherit; text-align:center"><br>
+</div>
+<div style=3D"font-family:inherit; text-align:center">=1B$B?=3D@A$K%3%a%s%H=
+$,DI2C$5$l$^$7$?!#=1B(B</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table class=3D"module" role=3D"module" border=3D"0" cellpadding=3D"0" cell=
+spacing=3D"0" width=3D"100%" style=3D"table-layout:fixed">
+<tbody>
+<tr>
+<td height=3D"100%" valign=3D"top" role=3D"module-content">
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%">
+<tbody>
+<tr>
+<td align=3D"center" bgcolor=3D"#ffffff">
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" styl=
+e=3D"max-width:500px">
+<tbody>
+<tr>
+<td align=3D"left" bgcolor=3D"#ffffff" style=3D"padding:24px; font-family:i=
+nherit; font-size:14px; line-height:20px">
+<h3>=1B$B?=3D@AFbMF=1B(B</h3>
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%">
+<tbody>
+<tr>
+<td align=3D"left" width=3D"25%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B?=3D@A<T=1B(B</td>
+<td align=3D"left" width=3D"75%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$BD9C+@n!!FX>O=1B(B</td>
+</tr>
+<tr>
+<td align=3D"left" width=3D"25%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B%?%$%H%k=1B(B</td>
+<td align=3D"left" width=3D"75%" style=3D"padding:6px 12px; line-height:20p=
+x">2026/04/29=1B$BD9C+@n!!FX>O!Z6&DL![8&=3D$=1B(B/=1B$B9V=3D,;22C?=3D@A=3Dq=
+=1B(B</td>
+</tr>
+<tr>
+<td align=3D"left" width=3D"25%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B%9%F!<%?%9=1B(B</td>
+<td align=3D"left" width=3D"75%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B?J9TCf=1B(B</td>
+</tr>
+<tr>
+<td align=3D"left" width=3D"25%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B?=3D@A$N<oN`=1B(B</td>
+<td align=3D"left" width=3D"75%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B!Z6&DL![8&=3D$=1B(B/=1B$B9V=3D,;22C?=3D@A=3Dq=1B(B</td>
+</tr>
+<tr>
+<td align=3D"left" width=3D"25%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B?=3D@A=1B(BNo</td>
+<td align=3D"left" width=3D"75%" style=3D"padding:6px 12px; line-height:20p=
+x">40356</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td align=3D"left" bgcolor=3D"#ffffff" style=3D"padding:24px; font-family:i=
+nherit; font-size:14px; line-height:20px">
+<h3>=1B$B%3%a%s%H=1B(B</h3>
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%">
+<tbody>
+<tr>
+<td align=3D"left" width=3D"30%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B%3%a%s%H5-:\<T=1B(B</td>
+<td align=3D"left" width=3D"70%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B6aF#!!9/9@=1B(B</td>
+</tr>
+<tr>
+<td align=3D"left" width=3D"30%" style=3D"padding:6px 12px; line-height:20p=
+x">=1B$B%3%a%s%HFbMF=1B(B</td>
+<td align=3D"left" width=3D"70%" style=3D"padding:6px 12px; line-height:20p=
+x">
+<pre>=1B$BJ82=3D:b$NJ]B83hMQ$K$*$1$kCN8+$rF@$k$3$H$,$G$-!":#EY$N6HL3$KLrN)$=
+F$k$3$H$,4|BT$G$-$^$9!#=1B(B</pre>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table class=3D"module" role=3D"module" border=3D"0" cellpadding=3D"0" cell=
+spacing=3D"0" width=3D"100%" style=3D"table-layout:fixed">
+<tbody>
+<tr>
+<td height=3D"100%" valign=3D"top" role=3D"module-content">
+<div style=3D"font-family:inherit; text-align:center"><span style=3D"box-si=
+zing:border-box; padding-top:0px; padding-right:0px; padding-bottom:0px; pa=
+dding-left:0px; margin-top:0px; margin-right:0px; margin-bottom:0px; margin=
+-left:0px; font-style:inherit; font-variant-ligatures:inherit; font-variant=
+-caps:inherit; font-variant-numeric:inherit; font-variant-east-asian:inheri=
+t; font-weight:inherit; font-stretch:inherit; line-height:inherit; font-fam=
+ily:inherit; font-size:14px; vertical-align:baseline; border-top-width:0px;=
+ border-right-width:0px; border-bottom-width:0px; border-left-width:0px; bo=
+rder-top-style:initial; border-right-style:initial; border-bottom-style:ini=
+tial; border-left-style:initial; border-top-color:initial; border-right-col=
+or:initial; border-bottom-color:initial; border-left-color:initial; color:#=
+000000; letter-spacing:normal; orphans:2; text-align:start; text-indent:0px=
+; text-transform:none; white-space:pre-wrap; widows:2; word-spacing:0px; ba=
+ckground-color:rgb(255,255,255); text-decoration-style:initial; text-decora=
+tion-color:initial">=1B$B>\:Y$O0J2<$N=1B(BURL=1B$B$+$i$43NG'$/$@$5$$!#=1B(B=
+</span>
+</div>
+<div style=3D"font-family:inherit; text-align:center"><br>
+</div>
+<div style=3D"font-family:inherit; text-align:center"><span style=3D"box-si=
+zing:border-box; padding-top:0px; padding-right:0px; padding-bottom:0px; pa=
+dding-left:0px; margin-top:0px; margin-right:0px; margin-bottom:0px; margin=
+-left:0px; font-style:inherit; font-variant-ligatures:inherit; font-variant=
+-caps:inherit; font-variant-numeric:inherit; font-variant-east-asian:inheri=
+t; font-weight:inherit; font-stretch:inherit; line-height:inherit; font-fam=
+ily:inherit; font-size:14px; vertical-align:baseline; border-top-width:0px;=
+ border-right-width:0px; border-bottom-width:0px; border-left-width:0px; bo=
+rder-top-style:initial; border-right-style:initial; border-bottom-style:ini=
+tial; border-left-style:initial; border-top-color:initial; border-right-col=
+or:initial; border-bottom-color:initial; border-left-color:initial; color:#=
+1188e6; letter-spacing:normal; orphans:2; text-align:start; text-indent:0px=
+; text-transform:none; white-space:pre-wrap; widows:2; word-spacing:0px; ba=
+ckground-color:rgb(255,255,255); text-decoration-style:initial; text-decora=
+tion-color:initial"><a href=3D"https://workflow.layerx.jp/requests/01KQAJ7J=
+HM9ND3NMZZG38NGS86?tenantId=3Dafe6b475-a83b-4463-aa72-e8d5608195ac&amp;noti=
+fication_platform=3Demail">=1B$B!V=1B(B2026/04/29=1B$BD9C+@n!!FX>O!Z6&DL![8=
+&=3D$=1B(B/=1B$B9V=3D,;22C?=3D@A=3Dq!W$r3NG'$9$k=1B(B</a></span></div>
+</td>
+</tr>
+</tbody>
+</table>
+<table class=3D"module" role=3D"module" border=3D"0" cellpadding=3D"0" cell=
+spacing=3D"0" width=3D"100%" style=3D"table-layout:fixed">
+<tbody>
+<tr>
+<td height=3D"100%" valign=3D"top" role=3D"module-content">
+<ul>
+<li color=3D"rgb(0, 0, 0)" style=3D"text-align:inherit; font-family:inherit=
+; color:rgb(0,0,0); font-size:13.3333px; font-size:13.3333px">
+<span style=3D"color:#000000; font-size:13.3333px; font-style:normal; font-=
+variant-ligatures:normal; font-variant-caps:normal; font-weight:400; letter=
+-spacing:normal; orphans:2; text-indent:0px; text-transform:none; white-spa=
+ce:normal; widows:2; word-spacing:0px; background-color:rgb(255,255,255); t=
+ext-decoration-style:initial; text-decoration-color:initial; float:none; di=
+splay:inline; font-family:inherit">=1B$BK\%a!<%k$OAw?.@lMQ%a!<%k%"%I%l%9$+$=
+iG[?.$5$l$F$$$^$9!#$4JV?.$$$?$@$$$F$b$*1~$($$$?$7$+$M$^$9$N$G!"$4N;>5$/$@$5=
+$$!#=1B(B</span></li><li color=3D"rgb(0, 0, 0)" style=3D"text-align:inherit=
+; font-family:inherit; color:rgb(0,0,0); font-size:13.3333px; font-size:13.=
+3333px">
+<span style=3D"color:#000000; font-size:13.3333px; font-style:normal; font-=
+variant-ligatures:normal; font-variant-caps:normal; font-weight:400; letter=
+-spacing:normal; orphans:2; text-indent:0px; text-transform:none; white-spa=
+ce:normal; widows:2; word-spacing:0px; background-color:rgb(255,255,255); t=
+ext-decoration-style:initial; text-decoration-color:initial; float:none; di=
+splay:inline; font-family:inherit">=1B$BK\%a!<%k$NG[?.Dd;_$O=1B(B<a href=3D=
+"https://workflow.layerx.jp/my_notification_setting?tenantId=3Dafe6b475-a83=
+b-4463-aa72-e8d5608195ac&amp;notification_platform=3Demail">=1B$B%P%/%i%/?=
+=3D@A!&7PHq@:;;$NDLCN@_Dj=1B(B</a>=1B$B$K$FJQ99$r$*4j$$$7$^$9!#=1B(B</span>=
+</li></ul>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</center>
+<img src=3D"https://u19931815.ct.sendgrid.net/wf/open?upn=3Du001.ZTGHfTtl5u=
+1DeQ-2Bq1TEBg2XqIiPnGb3OT9bSzNF8ETmw353ahPPsEuMb4jy2LWZhFMYW6mdc5quVdCmDyD7=
+S8R99xfTbPob7hMIcybeJUuLJvJN-2BU43yVQpllKy-2BMtsaqQgbd0p1YJiuNpiDFWgFEhSuMy=
+qmnZHsewP6X5tTJenbyBCKgsg7RRXCkkwXqHTEIW9LdZc2EDtjNXArlUYUIp7H9mIrLorC42yIb=
+jwhcIeVhUg788F4PxCzTLzGzFUuznInJDfBXdXTlar7-2Fh2zJhRDUI8xIVqCVkK6ELSNEbmmG1=
+yqTmyhYDRfUhop1wwn7o73qf1DpdO8MppRMTlukw-3D-3D" alt=3D"" width=3D"1" height=
+=3D"1" border=3D"0" style=3D"height:1px!important; width:1px!important; bor=
+der-width:0!important; margin-top:0!important; margin-bottom:0!important; m=
+argin-right:0!important; margin-left:0!important; padding-top:0!important; =
+padding-bottom:0!important; padding-right:0!important; padding-left:0!impor=
+tant">
+</div>
+</body>
+</html>
+
+--_000_c00676bf767f4b7fab27f11b6a0b67adTYCP301MB0095JPNP301PRO_--

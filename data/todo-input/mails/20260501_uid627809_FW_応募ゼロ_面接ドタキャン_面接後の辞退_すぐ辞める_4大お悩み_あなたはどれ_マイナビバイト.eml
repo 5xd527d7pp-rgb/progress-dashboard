@@ -1,0 +1,510 @@
+Return-path: <a-hasegawa@con-fujiyama.com>
+Original-recipient: rfc822;atsunori52@me.com
+Received: from p00-icloudmta-smtpin-us-west-2a-100-percent-13 by p111-mailgateway-smtp-7fdcf88f5b-glx7j (mailgateway 2616B129)
+	with SMTP id 72779103-d39c-4138-80c6-22a2d4ed962a 
+	for <atsunori52@me.com>; Fri, 1 May 2026 01:01:05 GMT
+X-ICLOUD-MAIL-BWL: 1
+X-Apple-MoveToFolder: INBOX 
+X-Apple-Action: WL/INBOX
+X-Apple-UUID: 72779103-d39c-4138-80c6-22a2d4ed962a
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11020072.outbound.protection.outlook.com [52.101.229.72])
+	by p00-icloudmta-smtpin-us-west-2a-100-percent-13 (Postfix) with ESMTPS id 5A364C0027B
+	for <atsunori52@me.com>; Fri, 01 May 2026 01:01:03 +0000 (UTC)
+X-ICL-Info: GAtbRVYDBVBFSlVESgMFUFUKE0oWX1gHVQoPB0UFBExESVdZSgIPTEJLRhIcDVdPHRgVEh9RQQM1GgkZVVZDCBwABxoZHlUNGFkAE0VTWQxYHxMdEUlXDxRXBRgVEEQBSBgSBA1eWRAcTFQ3FVUYARoURh8dXFlfISBVJ0oIACEgSVZFVl9DFhcWExkcHkYQGg0DFAxZWQxbFhMDFF9ZCVsaCRpYQEIQSBQHHhQdXAMFGAgSGUNCAw8WCEZJAARSRU5UWRdFQgAaDAgTVkBEDQEcBQMRX1hMGgwSGxdfXUwWFgtXHFQLBAATDw4ZXVdRQ0xIGBZdXwEHFhUYHkQYARoURhoRVAteTB9XFhpTBVoWTANCTAYFWkwYUUFKAw5RFxpTQE0HVVU1LT80KAMGUzg7VkdBBRgoJTc2REgBGDInNiJZN2ViLjo2LVk7f3tc
+X-ICL-Score: 2.33203332332
+Authentication-Results: bimi.icloud.com; bimi=skipped reason="insufficient dmarc"
+X-ARC-Info: policy=pass; arc=pass; id=mx.microsoft.com 1; r1=1; r2=1
+Authentication-Results: arc.icloud.com; arc=pass
+Authentication-Results: dmarc.icloud.com; dmarc=none header.from=con-fujiyama.com
+X-DMARC-Policy: none
+X-DMARC-Info: pass=none; dmarc-policy=(nopolicy); s=u0; d=u0; pdomain=con-fujiyama.com
+Authentication-Results: dkim-verifier.icloud.com; dkim=pass header.d=fujiyama365.onmicrosoft.com header.i=@fujiyama365.onmicrosoft.com header.b=s+hAak3D
+Received-SPF: pass (spf.icloud.com: domain of a-hasegawa@con-fujiyama.com designates 52.101.229.72 as permitted sender) receiver=spf.icloud.com; client-ip=52.101.229.72; helo=TY3P286CU002.outbound.protection.outlook.com; envelope-from=a-hasegawa@con-fujiyama.com
+Authentication-Results: spf.icloud.com; spf=pass (spf.icloud.com: domain of a-hasegawa@con-fujiyama.com designates 52.101.229.72 as permitted sender) smtp.mailfrom=a-hasegawa@con-fujiyama.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aW/GaJLANeGMD2SRzIl1kn6bW3NuvQ1LpVJBYy2qmO3yhfyuLziS1SGqO+PbE3ZXCA80fZXkSkoZWb0/gT+SVzHpixekIByfZaKd+nva10Qgq6ehhA6zUAEsdeUV1R5F+vfs6e031kOSzoasDU3XkDcHFZZosY8+lzuzP3FSZYYj/c6tBqteRPLi9ReHrJ+16Tmi5pDXXdka5klXa2RZjFCF9I8onaM68fY//xUCDM9uTnVscz8GO+IpvKwm8V+GU6+8t7y59hhybYB1jJat7O0coLR8a9wVX6i5CIKOPfOOFZ3Dcs/8N332oiJSbz4srmii5FuII1bTVaJnf6c40g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tbaTvvs2aDGqTKKgsZR3Szy+3Spgt4QrzAdEZneKyr0=;
+ b=h0ewmPvkmEgWCsWSzmO6GHO3bSNbntMUHKhAGcAjV6BDQN/eoW41Xb7klu2oRgfh4kyhDuGTQrThwFiOVlKwm3S5plY3qkPsYlvFaN5h2YWftRRUGJ0qas/zQG2OC5wg4owZ40Cldv9m/x2fUV1GuPD1JzBlNM6Nv+VUgtZLGIYAt+HIH/rf+OAytLQWuVapQ/ePr4tv3Np6w3R5EIw1aCDNp3RmfwITC1XmqZQaRB+DL2eckMIWAdQ/kVfmQwDqrvJSKx5hGFO+qCpbT86v7uwOSZjmbqr2VNKASNvqXf/u9zkHsZ92/DvUDp3a2T1fMoJQ7caxrw1gFlquvPsaBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=con-fujiyama.com; dmarc=pass action=none
+ header.from=con-fujiyama.com; dkim=pass header.d=con-fujiyama.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujiyama365.onmicrosoft.com; s=selector2-fujiyama365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tbaTvvs2aDGqTKKgsZR3Szy+3Spgt4QrzAdEZneKyr0=;
+ b=s+hAak3D7ZU+AGBW0Y2n6vjaa8MhQS5QkpsKC1PbDbhziRFNfgLbmhWKosOyCLXYAWHxaCxXBLFm1I/j+F6W3tpC/UhAVIi0P2m5KHqba4Sw58NGCNHd7xH6XJ0U0O2Z58b1NL/esw7hF/4Gn9HuiYqQnqSowM42fpD9T87Z0AI=
+Received: from TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM (2603:1096:400:2c5::5)
+ by TYCP301MB0572.JPNP301.PROD.OUTLOOK.COM (2603:1096:400:43a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.22; Fri, 1 May
+ 2026 01:00:57 +0000
+Received: from TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM ([::1]) by
+ TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM ([fe80::ad8f:416e:3f0a:3d74%5]) with
+ Microsoft SMTP Server id 15.20.9870.022; Fri, 1 May 2026 01:00:57 +0000
+From: =?iso-2022-jp?B?GyRCRDlDK0BuGyhCICAbJEJGWD5PGyhC?=
+	<a-hasegawa@con-fujiyama.com>
+To: "atsunori52@me.com" <atsunori52@me.com>
+Subject:
+ =?iso-2022-jp?B?Rlc6IBskQjF+SmclPCVtISJMTEBcJUklPyUtJWMlcyEiTExAXBsoQg==?=
+ =?iso-2022-jp?B?GyRCOGUkTjwtQmAhIiQ5JDA8LSRhJGshRCghKCEhSBsoQjQ=?=
+ =?iso-2022-jp?B?GyRCQmckKkc6JF8hSSEiJCIkSiQ/JE8kSSRsISkhQyVeJSQlSiVTGyhC?=
+ =?iso-2022-jp?B?GyRCJVAlJCVIGyhC?=
+Thread-Topic:
+ =?iso-2022-jp?B?GyRCMX5KZyU8JW0hIkxMQFwlSSU/JS0lYyVzISJMTEBcOGUkTjwtGyhC?=
+ =?iso-2022-jp?B?GyRCQmAhIiQ5JDA8LSRhJGshRCghKCEhSBsoQjQbJEJCZyQqRzobKEI=?=
+ =?iso-2022-jp?B?GyRCJF8hSSEiJCIkSiQ/JE8kSSRsISkhQyVeJSQlSiVTJVAlJCVIGyhC?=
+Thread-Index: AQHc2QX4if2UUIkHyEaIsZYCf9P1trX4WeSn
+Date: Fri, 1 May 2026 01:00:57 +0000
+Message-ID:
+ <9f1abc38c5e546389a762383bc5757c7@TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM>
+References:
+ <1611715905.86011085.1777597253714@mlm-mktmail-batch-0001-a-015.prod.va10.marketo.org>
+In-Reply-To:
+ <1611715905.86011085.1777597253714@mlm-mktmail-batch-0001-a-015.prod.va10.marketo.org>
+X-MS-Has-Attach:
+X-MS-Exchange-Inbox-Rules-Loop: a-hasegawa@con-fujiyama.com
+X-MS-TNEF-Correlator:
+x-ms-exchange-parent-message-id:
+ <1611715905.86011085.1777597253714@mlm-mktmail-batch-0001-a-015.prod.va10.marketo.org>
+auto-submitted: auto-generated
+x-ms-exchange-generated-message-source: Mailbox Rules Agent
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCP301MB0095:EE_|TYCP301MB0572:EE_
+x-ms-office365-filtering-correlation-id: d6018789-d770-445a-396b-08dea71d1ad5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|42112799006|366016|3109299003|7049299003|69100299015|10070799003|18002099003|22082099003|56012099003|13003099007|8096899003;
+x-microsoft-antispam-message-info:
+ kEAnIlO2OLssUnTdsDSSBuMpbQddMGSmszWebdq+NYvTb6E71ZDtDOhLglwJAM+EB4pl87M3esO7d1jdEW5BlHeZF4xJnFVpX7NFKsPBa7bCtebDoYbesKUUSEP5RdXNzL9N3w+lRp2aFwr/q58ysdqF8xBaOVGpIcQ/xxbxwfsJXw1anjbRZjA2iH/evLlCTc+xLkGEGgLHWqHKj7UJi6XocY+HqVHiVxPbMkt8HQDGq3dJpnGpEO+z/Cm2p2l5EXWJ79D/8ZT6C0CpDDbe04awGyJI4HceI3ilyjgrCOg51c7NBEGNFZ4z0IeiR4xbrE3PZN897VTBtpLcROl99X/5Xv3Bx8SNqEmaNfEU6JNZJfGW7wWE49D8OC9k8db/HRHSU15EHVUFuGa5RpzyUP9GwSqkdN2nmI+ua0mmt578Z958UqtiXozVO4KO6e8L85UT5kEcD70mnIIpebMIeOc9FQ/PLskWdxkSPUbRONvGt79wCLs3SSY3mePevRpllay8TSV+vUviTATqaG9oQcnPyGbbd7I/DdUFJCZfaggQYF3cX1IUR9LadSji+cjc8w92uMnA0FvjXIS/7BZRqU+Yqxk2FHTird8aWMQGXQ+WasNqVjT9O4pGA7nZ5NOgq1dCzuw2Ee2kLMroL4WRpQ==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(42112799006)(366016)(3109299003)(7049299003)(69100299015)(10070799003)(18002099003)(22082099003)(56012099003)(13003099007)(8096899003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ LKiQb5MBdGYoMXt6VjELr+6oGpVloL6wnrFKm9+dJzrBxijpD7Dd9t1eaKp/J0J2Y/AERZA8UmR7BCHG9kyL3wVevulWdCPjZF42XVT43r0jLB29vP5AvoH8Ndg22mkFFT28jNFjPlO2Z2Ib0sPr3buES9egTPQVZfLvWyLw95upbvG+ISntL3i+z/nQdlvfB12P8Q5+WOGydy54kMB6GRMvLcXk1vnl+CcuDxK0SWl35lA9wVVdbq6RbFPRvr2uf5IZFCWMDoMkN0loJuqYVDrQIrd4cmM9OXOTUfgnJ+X51IHEN4GF/Lj/zFClSFkIi37Z1vdmSj3Z7cDhqdHfh4w11jdNyX3i1n2O0XjMQtQ3aYPKukYJqxBpzHYJVTy6ZR7oPjZ5Q6V8z/TpLJldOd9MNhZuYT7eLFGhvS2Xp2WHTnQl6Dwq+gfslgS/vUFl
+Content-Type: multipart/alternative;
+	boundary="_000_9f1abc38c5e546389a762383bc5757c7TYCP301MB0095JPNP301PRO_"
+MIME-Version: 1.0
+X-OriginatorOrg: con-fujiyama.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCP301MB0095.JPNP301.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6018789-d770-445a-396b-08dea71d1ad5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 May 2026 01:00:57.9085
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7e2f0ccd-d175-41d1-a153-31c2a2f59ee9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCP301MB0572
+X-MANTSH: 1TFkXGxoaGhEKWUQXaUEYXU5tc2tCBV8RCllNF3pPWFlFREtGa0ZGRV0RCl9ZFxg
+ bExEKX00XZEVETxEKWUkXGnEaEBp3BhsTE3EbExgQGncGGBoGGhEKWV4XaGN5EQpDThd4a2BeG
+ x1gR0gHZ0RTQ0FfRG58YR5wGVp9UhNGHhtDYBEKWFwXGQQaBB8SBRsaGgQSGAQeGAQYHRAbHho
+ fGhEKXlkXQmFwBVgRCk1cFxgbHREKTFoXeGlNTWsRCkVZF3trEQpMXxd6BQUFBQUFBQUFQxEKT
+ EYXb01rY2xNaxEKQ1oXHxgEGxobBBgYEwQdGBEKQl4XGxEKRF4XGBEKQkUXbX5zYBNtR1NlbR0
+ RCkJOF2QBY2BeeBhJe0AcEQpCTBdpZXsBb3plbEhSbxEKQmwXYAVTU3NEekBdU24RCkJAF2h/G
+ X5Nfl1oZ0BSEQpCWBdoXk1pbl5/S2BfBREKQngXegVib3JMa2sbU0QRCk1eFxsRClpYFxsRCnB
+ nF20aXk5vZ0x6TU0fEBkaEQpwaBdnZmUBex1bT30BeBAZGhEKcGgXY1xSQlgeH3JdXmgQBxsSE
+ QpwaBdvH0huW2FLe2FwTBAZGhEKcGgXZlwbemFZXnxLTmEQGRoRCnBoF2R6WE0cH04BbE4FEBk
+ aEQpwaBduWUxYfxl7BRNeGBAZGhEKcGgXZXpEbxwYX35iaGcQGRoRCnBoF2VFc0ZGaBJySB9HE
+ BkaEQpwZxdvUmJNBUdAREZnbBAZGhEKcGwXZFp5WGkZaBJMRxsQGRoRCm1+FxsRClhNF0sR
+X-Proofpoint-GUID: RAJt17Jmb-MnyikunDVK4Z3pWx9l41iJ
+X-Proofpoint-ORIG-GUID: RAJt17Jmb-MnyikunDVK4Z3pWx9l41iJ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTAxMDAwOCBTYWx0ZWRfX5t0LU99N6w9P
+ eUaGPjJvHYUrNwCu6iLsdzconvk4vBdJQ54b2hKoJEWvQK2UlKv6CBEC15kEyv1Vm7L38SRMXPD
+ L0o47sc+H/CqHqHPT8OXch2h9OLVSYmRfSLX4QFEViDvrkGb/rnY33insdW4/4uA/2zGg/PX+6c
+ DCKezrIOA2OaTCNUN6NNgbYEGGrl8u4tutbSO3JK2PDQj+NDbJEB+vZOiow48M3Do9t5MTnxeFp
+ afkIyTBwYjdV/SAoPO5YzbK2RuwH/nYaQhVK+Rr8+jKnpaoktaExbXeHP+PBXhhmEe7shcnf7K9
+ V1Z6gOVenQ0Odc/cq0kYLrSlq16c5Cx3hiJmreYAw==
+X-JNJ: AAAAAAABid0KMID4N+Mcg35B7qL+DO+uL4ma53rNbbIWBFPmFMTFo2PgiS/S/klT+Zk7dOx7DCi97iFAlnrpuMaAp/tCg91o54fE1tRhQMcK4hrPydWn5taTQt7c2mDhomEo7kHmXGITPzpysbOeW8iXVQPQ92KF8O5lGWnbIThVc7Sn5adUqtA7+AYiLofrlahKolGFcbKoy6OPjL07sqiVrEGLfuqsmCAhMlNMo2FlVhKJjxS17k3eo/URtkszHJKryOhh52iiS4ZnQgAt4iM9Ihv3niG9bnyrG9ZCAWVhZxVVPfVhraA5cNDRkP9W76EO9Px42UbLjyzoM/SkT0mv0Vtly0ag3qZdGaTd58uVCNDr0baHObxfnmnOMEFkCJny8cVcBjGwX64KEEMwm66bHi6Zl+l8KZGC4o69nupymdoyyCzMuIlq/hE93o0pd3GuCk2E70qG8SkzAtyYz+e3k4cF/1qI94Q3XDLYN3RO4eUC7AIipojoU053h8Z2wQa9G+mvto2ai7m8RkdJn8TZRhpXb4pZfEFDlwWM/PChrIPHcNYBaOZDBlIcvtT25VZOS3m3qkka/+/b/dqgC5/F5/K2jNYLdC6dVzHYwNo5XF4gNwGLVFqn/C78EoQPwI6L8BVx4rqs86CvjEZtyNtYfUL6WYptcRmJULRgEJsW3oakW/AYMgVebpQqjRvcmtYKyxM7FXaophGEB7B8ZA0PuKQqXDwRfUSl9AG+h80xrMtUEah5ZSZRr7m5skbw85ibTqW+a7Lul9dWa2ZQOiu/it9Q6X6DDrrOp93mD39CmHbOdyCRcRbJTLCKguYupXimqjDYCIoL7fKBnI/MrKpCg/zKQ7y0Qu0hwSASSPaE9I13ARI3dO7w/ifI6cfS7FzxFR5fhGHbHqeI6N0dmFuepXRMOnCGyJlXGg4gDgcnUCYAnmhQGoltmGkH06j/jmwA4tIahrKydehoH76QMI8DGo44uYd1Zfk8ABlIpYpvZqBREeo=
+
+--_000_9f1abc38c5e546389a762383bc5757c7TYCP301MB0095JPNP301PRO_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+
+________________________________
+=1B$B:9=3DP?M=1B(B: =1B$B%^%$%J%S%P%$%HJT=3D8It=1B(B <baito_mm@nalevi.mynav=
+i.jp>
+=1B$BAw?.F|;~=1B(B: 2026=1B$BG/=1B(B5=1B$B7n=1B(B1=1B$BF|6bMKF|=1B(B 10:00:=
+53 (UTC+09:00) Osaka, Sapporo, Tokyo
+=1B$B08@h=1B(B: =1B$BD9C+@n=1B(B =1B$BFX>O=1B(B <a-hasegawa@con-fujiyama.co=
+m>
+=1B$B7oL>=1B(B: =1B$B1~Jg%<%m!"LL@\%I%?%-%c%s!"LL@\8e$N<-B`!"$9$0<-$a$k!D(!=
+(!!H=1B(B4=1B$BBg$*G:$_!I!"$"$J$?$O$I$l!)!C%^%$%J%S%P%$%H=1B(B
+
+
+[4=1B$BBg$*G:$_!"$"$J$?$O$I$l!)=1B(B.jpg]
+
+=1B$BD9C+@nFX>OMM=1B(B
+
+=1B$BJ?AG$h$jBgJQ$*@$OC$K$J$C$F$*$j$^$9!#%^%$%J%S%P%$%HJT=3D8It$G$9!#=1B(B
+
+=1B$B%"%k%P%$%H:NMQ$G$O!"=1B(B
+=1B$B"!1~Jg$,=3D8$^$i$J$$=1B(B
+=1B$B"!LL@\$KMh$J$$=1B(B
+=1B$B"!9g3J8e!"<-B`$5$l$F$7$^$&=1B(B
+=1B$B"!$9$0<-$a$F$7$^$&=1B(B
+=1B$B$H$$$C$?G:$_$,!"I,$:$I$3$+$NCJ3,$GH/@8$7$^$9!#=1B(B
+
+=1B$BK\F|$O$*G:$_$K9g$o$;$?!"?M5$$N$*LrN)$A5-;v$r$*Aw$j$7$^$9!#=1B(B
+=1B$BL5NA$G1\Mw$$$?$@$1$^$9$N$G!"$<$R$40lFI$/$@$5$$!#=1B(B
+
+--------------------------------------------------
+=1B$B!!!!$"$J$?$NG:$_$O$I$l$G$9$+!)=1B(B
+--------------------------------------------------
+
+=1B$B-!=1B(B =1B$B1~Jg$,Mh$J$$=1B(B
+=1B$B5a?M$r=3DP$7$F$bH?1~$,Gv$$=1B(B
+=1B$B1~JgC12A$,9bF-$7$F$$$k=1B(B
+
+=1B$B"*!Z<BNc![F10l%W%i%s$G$b@.2L$OJQ$o$k!*5a?M869F$N=1B(BSEO=1B$B2~A1$G1\M=
+w?t=1B(B64%=1B$BA}!&1~Jg=1B(B3=1B$BG\$K8~>e$7$?2~A1FbMF$H$O=1B(B
+https://nalevi.mynavi.jp/problem/know-how/24281/<http://mail.nalevi.mynavi.=
+jp/MzY1LUFKQy0yMjIAAAGhgAY4TnR7ji3HWHvDYZoMM0Jj_1M0IXIUkBdn77ALQ4rYUJ4Y8eyQ=
+6zjZBtMXe2Nc-u9plVQ=3D>
+
+--------------------------------------------------
+
+=1B$B-"=1B(B =1B$B1~Jg8e!"LL@\$KMh$J$$=1B(B
+=1B$BLL@\%I%?%-%c%s!&2;?.ITDL$,B?$$=1B(B
+=1B$BF|DxD4@0$K;~4V$,$+$+$j!"N%C&$7$F$7$^$&=1B(B
+
+=1B$B"*LL@\<-B`$rKI$0!"1~Jg<T$NEEOCBP1~$N%3%D$H$O!)=1B(B
+https://nalevi.mynavi.jp/problem/interview/20518/<http://mail.nalevi.mynavi=
+.jp/MzY1LUFKQy0yMjIAAAGhgAY4Tts0oFEydGRpGzY4CBxlplwM869-BmwJ9Esx4txKMNVsrYi=
+m8lRmi_Clc-R17bCwkYQ=3D>
+
+--------------------------------------------------
+
+=1B$B-#=1B(B =1B$BLL@\8e!"<-B`$5$l$k=1B(B
+=1B$BB><R$KN.$l$F$7$^$&=1B(B
+=1B$BLL@\$GL%NO$,EA$o$j$-$C$F$$$J$$=1B(B
+
+=1B$B"*LL@\=1B(B3=1B$BJ,$G!V$3$3$GF/$-$?$$!W$r0z$-=3DP$9!#8=3D>l$N@<!_K!Na=
+=3De<i$N%"%k%P%$%H:NMQ=3DQ=1B(B
+https://nalevi.mynavi.jp/problem/interview/23943/<http://mail.nalevi.mynavi=
+.jp/MzY1LUFKQy0yMjIAAAGhgAY4TtaHxR8LqoIcjaUXnV0_06vWMGutyVv4mQRl5z1kIuyEKsr=
+pO_mTkehHc4HQqw7sntU=3D>
+
+--------------------------------------------------
+
+=1B$B-$=1B(B =1B$BDjCe$7$J$$!&Aa4|N%?&$,B?$$=1B(B
+=1B$BF~<R$7$F$b$9$0<-$a$F$7$^$&=1B(B
+=1B$B650i%3%9%H$,2s<}$G$-$J$$=1B(B
+
+=1B$B"*!V%"%k%P%$%H$,=3DiF|$G<-$a$A$c$C$?!*!W$rKI$0!"=3DiF|<u$1F~$l40A4%,%$=
+%I=1B(B
+https://nalevi.mynavi.jp/problem/organization/24182/<http://mail.nalevi.myn=
+avi.jp/MzY1LUFKQy0yMjIAAAGhgAY4Tv7sBcxWW38baXdofpe0prU3S_1g-eF1xrA0OPRsBjlC=
+uc3vIUBjU1cBjCl0DeAkFWU=3D>
+
+--------------------------------------------------
+=1B$B!!!!$=3D$N$*G:$_!"%^%$%J%S$K$4AjCL$/$@$5$$!#=1B(B
+--------------------------------------------------
+=1B$BK\%a!<%k$K$D$$$F$N$4<ALd$d$4AjCL$,$4$6$$$^$7$?$i!"=1B(B
+=1B$B$*5$7Z$K$*Ld$$9g$o$;$/$@$5$$!#=1B(B
+=1B$B5.<R$N:NMQ@.8y$K8~$1$*G:$_$K9g$o$;$F!"E,@Z$J%5%]!<%H$r$$$?$7$^$9!#=1B(=
+B
+
+=1B$B"'"'%^%$%J%S%P%$%H$KLd$$9g$o$;!JAjCLL5NA!K=1B(B
+https://baito.mynavi.jp/forkigyo/form_list/contact_ma_mail/?mail_name=3DEG_=
+ProblemDiscovery<http://mail.nalevi.mynavi.jp/dc/ceCChQ7b7NPieVaJol2IhO5H2c=
+1AEhDOefSBTGpgHaPNZSO8VXybnSE_xj_A3OvyvmRfSHG64VO-hy4U4U1aZcAapzdwAL_Evy9Jr=
+kx09oxJMMlv0EP2LC4bicDu_NXS/MzY1LUFKQy0yMjIAAAGhgAY4Tuo4db4tLMHtnKUkjWUTwvA=
+ZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D>
+=1B$B"'"'%5!<%S%9;qNA@A5a!JL5NA!K=1B(B
+https://baito.mynavi.jp/forkigyo/form_list/service_ma_mail/?mail_name=3DEG_=
+ProblemDiscovery<http://mail.nalevi.mynavi.jp/dc/ceCChQ7b7NPieVaJol2IhO5H2c=
+1AEhDOefSBTGpgHaPcYL7-nTxRv9XFgoo9uN2rfMnpgMP4gTQYsKXd5oFKBpawthQK02wiVliYU=
+D70tYJabgI4wbmgsjfoThI2Mrjt/MzY1LUFKQy0yMjIAAAGhgAY4Tuo4db4tLMHtnKUkjWUTwvA=
+ZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D>
+
+=1B$B:#8e$b!"%"%k%P%$%H:NMQ!&DjCe$K4X$9$k$*LrN)$A>pJs$r$*FO$1$7$F$^$$$j$^$9=
+!#=1B(B
+=1B$B0z$-B3$-$h$m$7$/$*4j$$$$$?$7$^$9!#=1B(B
+
+--------------------------------------------------
+=1B$B!zEv%a!<%k%^%,%8%s$O2a5n$KL>;I8r49$r$7$?J}!"$*Ld9g$;$r$$$?$@$$$?J}!"%^=
+%$%J%S%P%$%H$K$47G:\$$$?$@$$$?J}$K$*Aw$j$7$F$$$^$9!#=1B(B
+=1B$B!zEv%a!<%k%^%,%8%s$,LBOG%a!<%k%U%)%k%@$KF~$C$?>l9g$O!"<u?.%H%l%$$K0\F0=
+$7$F$$$?$@$1$k$H9,$$$G$9!#=1B(B
+=1B$B!z$3$N%a!<%k$OAw?.@lMQ%a!<%k%"%I%l%9$+$iG[?.$5$l$F$$$^$9!#=1B(B =1B$B$=
+3$N$^$^$4JV?.$$$?$@$$$F$b$*Ez$($G$-$^$;$s$N$G$4N;>5$/$@$5$$!#=1B(B
+--------------------------------------------------
+=1B$B3t<02q<R%^%$%J%S!!%^%$%J%S%P%$%HJT=3D8It=1B(B
+=1B$B")=1B(B100-0003
+=1B$BEl5~ET@iBeED6h0l%D66=1B(B1-1-1 =1B$B%Q%l%9%5%$%I%S%k=1B(B
+
+=1B$B!Z$*EEOC$G$N$*Ld9g$;![=1B(B0120-058-054=1B$B!JJ?F|=1B(B9:30=1B$B!A=1B(=
+B18:00=1B$B!K=1B(B
+=1B$B"(5a?M7G:\0J30$N:NMQ$K4X$9$k$*Ld$$9g$o$;$b$3$A$i$+$i>5$j$^$9=1B(B
+
+=1B$B!Z=1B(BEmail=1B$B![=1B(B a-baitoclient@mynavi.jp
+=1B$B!ZK!?M8~$1%5%$%H![=1B(B https://baito.mynavi.jp/forkigyo/<http://mail.=
+nalevi.mynavi.jp/MzY1LUFKQy0yMjIAAAGhgAY4TrspX23_APPLvpT63s755gkQ5jmmQMoFM4=
+vHjwmdmTqYdpr6XkfeyXPKm9xlhCjZTM4=3D>
+=1B$B!Z%5!<%S%9;qNA![!!=1B(Bhttps://baito.mynavi.jp/forkigyo/form_list/serv=
+ice_ma_mail/?mail_name=3DEG_ProblemDiscovery<http://mail.nalevi.mynavi.jp/d=
+c/ceCChQ7b7NPieVaJol2IhO5H2c1AEhDOefSBTGpgHaPcYL7-nTxRv9XFgoo9uN2rfMnpgMP4g=
+TQYsKXd5oFKBpawthQK02wiVliYUD70tYJabgI4wbmgsjfoThI2Mrjt/MzY1LUFKQy0yMjIAAAG=
+hgAY4Tuo4db4tLMHtnKUkjWUTwvAZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D=
+>
+=1B$B!Z7G:\$N$*Ld9g$;![!!=1B(Bhttps://baito.mynavi.jp/forkigyo/form_list/co=
+ntact_ma_mail/?mail_name=3DEG_ProblemDiscovery<http://mail.nalevi.mynavi.jp=
+/dc/ceCChQ7b7NPieVaJol2IhO5H2c1AEhDOefSBTGpgHaPNZSO8VXybnSE_xj_A3OvyvmRfSHG=
+64VO-hy4U4U1aZcAapzdwAL_Evy9Jrkx09oxJMMlv0EP2LC4bicDu_NXS/MzY1LUFKQy0yMjIAA=
+AGhgAY4Tuo4db4tLMHtnKUkjWUTwvAZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=
+=3D>
+=1B$B!Z%a%k%^%,G[?.Dd;_![!!=1B(B https://lp.nalevi.mynavi.jp/UnsubscribePag=
+e.html?mail_name=3DEG_ProblemDiscovery<http://mail.nalevi.mynavi.jp/dc/58Af=
+12AGSmS3vPkvY8KkAVgYRw1eRJCkfuO8oVaGdCeNDorc9jAAV-AMKlD9S2S6TFzzCJIw9t6dHTW=
+pAVMwHyXLSJXEbI577kNPVhtLeV8=3D/MzY1LUFKQy0yMjIAAAGhgAY4Tuo4db4tLMHtnKUkjWU=
+TwvAZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D>
+
+=1B$B%^%$%J%S%P%$%H$K4X$9$k$40U8+$O$3$A$i$+$i=1B(B
+=1B$B!Z$*5RMMBP1~Ak8}![=1B(B0800-601-8193
+=1B$B!Z%a!<%k$G$N$*Ld9g$;![=1B(Bmb-tokyocs@mynavi.jp
+
+--------------------------------------------------
+
+<http://mail.nalevi.mynavi.jp/MzY1LUFKQy0yMjIAAAGhgAY4ThXqw5n_4unv2_fqp15Z1=
+vaEWcOA3n-eib0Fh--JjSmsO6J9OkLWI_2Nu5YuqZ7b8Io=3D>
+
+=1B$B$3$N%a!<%k$O=1B(B a-hasegawa@con-fujiyama.com =1B$B$KAw?.$5$l$^$7$?!#:=
+#8e!"%a!<%k$N<u?.$r4uK>$5$l$J$$>l9g$O!"$3$A$i$+$iG[?.Dd;_=1B(B<http://mail.=
+nalevi.mynavi.jp/dcu/58Af12AGSmS3vPkvY8KkAVgYRw1eRJCkfuO8oVaGdCeNDorc9jAAV-=
+AMKlD9S2S6TFzzCJIw9t6dHTWpAVMwHyXLSJXEbI577kNPVhtLeV8=3D/MzY1LUFKQy0yMjIAAA=
+GhgAY4Tuo4db4tLMHtnKUkjWUTwvAZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=
+=3D>=1B$B$N<jB3$-$r$*4j$$$$$?$7$^$9!#=1B(B
+
+--_000_9f1abc38c5e546389a762383bc5757c7TYCP301MB0095JPNP301PRO_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+</head>
+<body>
+<strong>
+<div><font face=3D"Tahoma" color=3D"#000000" size=3D"2">&nbsp;</font></div>
+</strong>
+<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
+<font face=3D"Tahoma" size=3D"2"><b>=1B$B:9=3DP?M=1B(B:</b> =1B$B%^%$%J%S%P=
+%$%HJT=3D8It=1B(B &lt;baito_mm@nalevi.mynavi.jp&gt;<br>
+<b>=1B$BAw?.F|;~=1B(B:</b> 2026=1B$BG/=1B(B5=1B$B7n=1B(B1=1B$BF|6bMKF|=1B(B=
+ 10:00:53 (UTC+09:00) Osaka, Sapporo, Tokyo<br>
+<b>=1B$B08@h=1B(B:</b> =1B$BD9C+@n=1B(B =1B$BFX>O=1B(B &lt;a-hasegawa@con-f=
+ujiyama.com&gt;<br>
+<b>=1B$B7oL>=1B(B:</b> =1B$B1~Jg%<%m!"LL@\%I%?%-%c%s!"LL@\8e$N<-B`!"$9$0<-$=
+a$k!D(!(!!H=1B(B4=1B$BBg$*G:$_!I!"$"$J$?$O$I$l!)!C%^%$%J%S%P%$%H=1B(B<br>
+</font><br>
+<div></div>
+<div>
+<div id=3D"body" class=3D"mktoText" style=3D"font-family:Helvetica,Arial,Sa=
+ns-Serif; padding:10px">
+<p><img src=3D"https://lp.nalevi.mynavi.jp/rs/365-AJC-222/images/4%E5%A4%A7=
+%E3%81%8A%E6%82%A9%E3%81%BF%E3%80%81%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AF%E3=
+%81%A9%E3%82%8C%EF%BC%9F.jpg" alt=3D"4=1B$BBg$*G:$_!"$"$J$?$O$I$l!)=1B(B.jp=
+g" height=3D"293" width=3D"600"></p>
+<p>=1B$BD9C+@nFX>OMM=1B(B<br>
+<br>
+=1B$BJ?AG$h$jBgJQ$*@$OC$K$J$C$F$*$j$^$9!#%^%$%J%S%P%$%HJT=3D8It$G$9!#=1B(B<=
+/p>
+<p>=1B$B%"%k%P%$%H:NMQ$G$O!"=1B(B<br>
+=1B$B"!1~Jg$,=3D8$^$i$J$$=1B(B<br>
+=1B$B"!LL@\$KMh$J$$=1B(B<br>
+=1B$B"!9g3J8e!"<-B`$5$l$F$7$^$&=1B(B<br>
+=1B$B"!$9$0<-$a$F$7$^$&=1B(B<br>
+=1B$B$H$$$C$?G:$_$,!"I,$:$I$3$+$NCJ3,$GH/@8$7$^$9!#=1B(B</p>
+<p>=1B$BK\F|$O$*G:$_$K9g$o$;$?!"?M5$$N$*LrN)$A5-;v$r$*Aw$j$7$^$9!#=1B(B<br>
+=1B$BL5NA$G1\Mw$$$?$@$1$^$9$N$G!"$<$R$40lFI$/$@$5$$!#=1B(B</p>
+<p>--------------------------------------------------<br>
+=1B$B!!!!$"$J$?$NG:$_$O$I$l$G$9$+!)=1B(B<br>
+--------------------------------------------------</p>
+<p>=1B$B-!=1B(B =1B$B1~Jg$,Mh$J$$=1B(B<br>
+=1B$B5a?M$r=3DP$7$F$bH?1~$,Gv$$=1B(B<br>
+=1B$B1~JgC12A$,9bF-$7$F$$$k=1B(B</p>
+<p>=1B$B"*!Z<BNc![F10l%W%i%s$G$b@.2L$OJQ$o$k!*5a?M869F$N=1B(BSEO=1B$B2~A1$G=
+1\Mw?t=1B(B64%=1B$BA}!&1~Jg=1B(B3=1B$BG\$K8~>e$7$?2~A1FbMF$H$O=1B(B<br>
+<a href=3D"http://mail.nalevi.mynavi.jp/MzY1LUFKQy0yMjIAAAGhgAY4TnR7ji3HWHv=
+DYZoMM0Jj_1M0IXIUkBdn77ALQ4rYUJ4Y8eyQ6zjZBtMXe2Nc-u9plVQ=3D" target=3D"_bla=
+nk">https://nalevi.mynavi.jp/problem/know-how/24281/</a><br>
+</p>
+<p><span style=3D"color:#222222; font-family:Helvetica,Arial,sans-serif; fo=
+nt-size:small; font-style:normal; font-variant-ligatures:normal; font-varia=
+nt-caps:normal; font-weight:400; letter-spacing:normal; orphans:2; text-ali=
+gn:start; text-indent:0px; text-transform:none; widows:2; word-spacing:0px;=
+ white-space:normal; background-color:#ffffff; text-decoration-style:initia=
+l; text-decoration-color:initial; display:inline!important; float:none">---=
+---------------------------</span><wbr style=3D"color:#222222; font-family:=
+Helvetica,Arial,sans-serif; font-size:small; font-style:normal; font-varian=
+t-ligatures:normal; font-variant-caps:normal; font-weight:400; letter-spaci=
+ng:normal; orphans:2; text-align:start; text-indent:0px; text-transform:non=
+e; widows:2; word-spacing:0px; white-space:normal; background-color:#ffffff=
+; text-decoration-style:initial; text-decoration-color:initial"><span style=
+=3D"color:#222222; font-family:Helvetica,Arial,sans-serif; font-size:small;=
+ font-style:normal; font-variant-ligatures:normal; font-variant-caps:normal=
+; font-weight:400; letter-spacing:normal; orphans:2; text-align:start; text=
+-indent:0px; text-transform:none; widows:2; word-spacing:0px; white-space:n=
+ormal; background-color:#ffffff; text-decoration-style:initial; text-decora=
+tion-color:initial; display:inline!important; float:none">-----------------=
+---</span></p>
+<p>=1B$B-"=1B(B =1B$B1~Jg8e!"LL@\$KMh$J$$=1B(B<br>
+=1B$BLL@\%I%?%-%c%s!&2;?.ITDL$,B?$$=1B(B<br>
+=1B$BF|DxD4@0$K;~4V$,$+$+$j!"N%C&$7$F$7$^$&=1B(B</p>
+<p>=1B$B"*LL@\<-B`$rKI$0!"1~Jg<T$NEEOCBP1~$N%3%D$H$O!)=1B(B<br>
+<a href=3D"http://mail.nalevi.mynavi.jp/MzY1LUFKQy0yMjIAAAGhgAY4Tts0oFEydGR=
+pGzY4CBxlplwM869-BmwJ9Esx4txKMNVsrYim8lRmi_Clc-R17bCwkYQ=3D" target=3D"_bla=
+nk" id=3D"">https://nalevi.mynavi.jp/problem/interview/20518/</a><br>
+</p>
+<p><span style=3D"color:#222222; font-family:Helvetica,Arial,sans-serif; fo=
+nt-size:small; font-style:normal; font-variant-ligatures:normal; font-varia=
+nt-caps:normal; font-weight:400; letter-spacing:normal; orphans:2; text-ali=
+gn:start; text-indent:0px; text-transform:none; widows:2; word-spacing:0px;=
+ white-space:normal; background-color:#ffffff; text-decoration-style:initia=
+l; text-decoration-color:initial; display:inline!important; float:none">---=
+---------------------------</span><wbr style=3D"color:#222222; font-family:=
+Helvetica,Arial,sans-serif; font-size:small; font-style:normal; font-varian=
+t-ligatures:normal; font-variant-caps:normal; font-weight:400; letter-spaci=
+ng:normal; orphans:2; text-align:start; text-indent:0px; text-transform:non=
+e; widows:2; word-spacing:0px; white-space:normal; background-color:#ffffff=
+; text-decoration-style:initial; text-decoration-color:initial"><span style=
+=3D"color:#222222; font-family:Helvetica,Arial,sans-serif; font-size:small;=
+ font-style:normal; font-variant-ligatures:normal; font-variant-caps:normal=
+; font-weight:400; letter-spacing:normal; orphans:2; text-align:start; text=
+-indent:0px; text-transform:none; widows:2; word-spacing:0px; white-space:n=
+ormal; background-color:#ffffff; text-decoration-style:initial; text-decora=
+tion-color:initial; display:inline!important; float:none">-----------------=
+---</span></p>
+<p>=1B$B-#=1B(B =1B$BLL@\8e!"<-B`$5$l$k=1B(B<br>
+=1B$BB><R$KN.$l$F$7$^$&=1B(B<br>
+=1B$BLL@\$GL%NO$,EA$o$j$-$C$F$$$J$$=1B(B</p>
+<p>=1B$B"*LL@\=1B(B3=1B$BJ,$G!V$3$3$GF/$-$?$$!W$r0z$-=3DP$9!#8=3D>l$N@<!_K!=
+Na=3De<i$N%"%k%P%$%H:NMQ=3DQ=1B(B<br>
+<a href=3D"http://mail.nalevi.mynavi.jp/MzY1LUFKQy0yMjIAAAGhgAY4TtaHxR8LqoI=
+cjaUXnV0_06vWMGutyVv4mQRl5z1kIuyEKsrpO_mTkehHc4HQqw7sntU=3D" target=3D"_bla=
+nk" id=3D"">https://nalevi.mynavi.jp/problem/interview/23943/</a><br>
+</p>
+<p><span style=3D"color:#222222; font-family:Helvetica,Arial,sans-serif; fo=
+nt-size:small; font-style:normal; font-variant-ligatures:normal; font-varia=
+nt-caps:normal; font-weight:400; letter-spacing:normal; orphans:2; text-ali=
+gn:start; text-indent:0px; text-transform:none; widows:2; word-spacing:0px;=
+ white-space:normal; background-color:#ffffff; text-decoration-style:initia=
+l; text-decoration-color:initial; display:inline!important; float:none">---=
+---------------------------</span><wbr style=3D"color:#222222; font-family:=
+Helvetica,Arial,sans-serif; font-size:small; font-style:normal; font-varian=
+t-ligatures:normal; font-variant-caps:normal; font-weight:400; letter-spaci=
+ng:normal; orphans:2; text-align:start; text-indent:0px; text-transform:non=
+e; widows:2; word-spacing:0px; white-space:normal; background-color:#ffffff=
+; text-decoration-style:initial; text-decoration-color:initial"><span style=
+=3D"color:#222222; font-family:Helvetica,Arial,sans-serif; font-size:small;=
+ font-style:normal; font-variant-ligatures:normal; font-variant-caps:normal=
+; font-weight:400; letter-spacing:normal; orphans:2; text-align:start; text=
+-indent:0px; text-transform:none; widows:2; word-spacing:0px; white-space:n=
+ormal; background-color:#ffffff; text-decoration-style:initial; text-decora=
+tion-color:initial; display:inline!important; float:none">-----------------=
+---</span></p>
+<p>=1B$B-$=1B(B =1B$BDjCe$7$J$$!&Aa4|N%?&$,B?$$=1B(B<br>
+=1B$BF~<R$7$F$b$9$0<-$a$F$7$^$&=1B(B<br>
+=1B$B650i%3%9%H$,2s<}$G$-$J$$=1B(B</p>
+<p>=1B$B"*!V%"%k%P%$%H$,=3DiF|$G<-$a$A$c$C$?!*!W$rKI$0!"=3DiF|<u$1F~$l40A4%=
+,%$%I=1B(B<br>
+<a href=3D"http://mail.nalevi.mynavi.jp/MzY1LUFKQy0yMjIAAAGhgAY4Tv7sBcxWW38=
+baXdofpe0prU3S_1g-eF1xrA0OPRsBjlCuc3vIUBjU1cBjCl0DeAkFWU=3D" target=3D"_bla=
+nk" id=3D"">https://nalevi.mynavi.jp/problem/organization/24182/</a><br>
+</p>
+<p>--------------------------------------------------<br>
+=1B$B!!!!$=3D$N$*G:$_!"%^%$%J%S$K$4AjCL$/$@$5$$!#=1B(B<br>
+--------------------------------------------------<br>
+=1B$BK\%a!<%k$K$D$$$F$N$4<ALd$d$4AjCL$,$4$6$$$^$7$?$i!"=1B(B<br>
+=1B$B$*5$7Z$K$*Ld$$9g$o$;$/$@$5$$!#=1B(B<br>
+=1B$B5.<R$N:NMQ@.8y$K8~$1$*G:$_$K9g$o$;$F!"E,@Z$J%5%]!<%H$r$$$?$7$^$9!#=1B(=
+B<br>
+</p>
+<p>=1B$B"'"'%^%$%J%S%P%$%H$KLd$$9g$o$;!JAjCLL5NA!K=1B(B<br>
+<a href=3D"http://mail.nalevi.mynavi.jp/dc/ceCChQ7b7NPieVaJol2IhO5H2c1AEhDO=
+efSBTGpgHaPNZSO8VXybnSE_xj_A3OvyvmRfSHG64VO-hy4U4U1aZcAapzdwAL_Evy9Jrkx09ox=
+JMMlv0EP2LC4bicDu_NXS/MzY1LUFKQy0yMjIAAAGhgAY4Tuo4db4tLMHtnKUkjWUTwvAZqkYAK=
+L405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D" target=3D"_blank" id=3D"">https:=
+//baito.mynavi.jp/forkigyo/form_list/contact_ma_mail/?mail_name=3DEG_Proble=
+mDiscovery</a><br>
+=1B$B"'"'%5!<%S%9;qNA@A5a!JL5NA!K=1B(B<br>
+<a href=3D"http://mail.nalevi.mynavi.jp/dc/ceCChQ7b7NPieVaJol2IhO5H2c1AEhDO=
+efSBTGpgHaPcYL7-nTxRv9XFgoo9uN2rfMnpgMP4gTQYsKXd5oFKBpawthQK02wiVliYUD70tYJ=
+abgI4wbmgsjfoThI2Mrjt/MzY1LUFKQy0yMjIAAAGhgAY4Tuo4db4tLMHtnKUkjWUTwvAZqkYAK=
+L405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D" target=3D"_blank" id=3D"">https:=
+//baito.mynavi.jp/forkigyo/form_list/service_ma_mail/?mail_name=3DEG_Proble=
+mDiscovery</a><br>
+</p>
+<p>=1B$B:#8e$b!"%"%k%P%$%H:NMQ!&DjCe$K4X$9$k$*LrN)$A>pJs$r$*FO$1$7$F$^$$$j$=
+^$9!#=1B(B<br>
+=1B$B0z$-B3$-$h$m$7$/$*4j$$$$$?$7$^$9!#=1B(B</p>
+<p>--------------------------------------------------<br>
+=1B$B!zEv%a!<%k%^%,%8%s$O2a5n$KL>;I8r49$r$7$?J}!"$*Ld9g$;$r$$$?$@$$$?J}!"%^=
+%$%J%S%P%$%H$K$47G:\$$$?$@$$$?J}$K$*Aw$j$7$F$$$^$9!#=1B(B<br>
+=1B$B!zEv%a!<%k%^%,%8%s$,LBOG%a!<%k%U%)%k%@$KF~$C$?>l9g$O!"<u?.%H%l%$$K0\F0=
+$7$F$$$?$@$1$k$H9,$$$G$9!#=1B(B<br>
+=1B$B!z$3$N%a!<%k$OAw?.@lMQ%a!<%k%"%I%l%9$+$iG[?.$5$l$F$$$^$9!#=1B(B =1B$B$=
+3$N$^$^$4JV?.$$$?$@$$$F$b$*Ez$($G$-$^$;$s$N$G$4N;>5$/$@$5$$!#=1B(B<br>
+--------------------------------------------------<br>
+=1B$B3t<02q<R%^%$%J%S!!%^%$%J%S%P%$%HJT=3D8It=1B(B<br>
+=1B$B")=1B(B100-0003<br>
+=1B$BEl5~ET@iBeED6h0l%D66=1B(B1-1-1 =1B$B%Q%l%9%5%$%I%S%k=1B(B<br>
+<br>
+=1B$B!Z$*EEOC$G$N$*Ld9g$;![=1B(B0120-058-054=1B$B!JJ?F|=1B(B9:30=1B$B!A=1B(=
+B18:00=1B$B!K=1B(B<br>
+=1B$B"(5a?M7G:\0J30$N:NMQ$K4X$9$k$*Ld$$9g$o$;$b$3$A$i$+$i>5$j$^$9=1B(B<br>
+<br>
+=1B$B!Z=1B(BEmail=1B$B![=1B(B a-baitoclient@mynavi.jp<br>
+=1B$B!ZK!?M8~$1%5%$%H![=1B(B <a href=3D"http://mail.nalevi.mynavi.jp/MzY1LU=
+FKQy0yMjIAAAGhgAY4TrspX23_APPLvpT63s755gkQ5jmmQMoFM4vHjwmdmTqYdpr6XkfeyXPKm=
+9xlhCjZTM4=3D" target=3D"_blank" id=3D"">
+https://baito.mynavi.jp/forkigyo/</a><br>
+=1B$B!Z%5!<%S%9;qNA![!!=1B(B<a href=3D"http://mail.nalevi.mynavi.jp/dc/ceCC=
+hQ7b7NPieVaJol2IhO5H2c1AEhDOefSBTGpgHaPcYL7-nTxRv9XFgoo9uN2rfMnpgMP4gTQYsKX=
+d5oFKBpawthQK02wiVliYUD70tYJabgI4wbmgsjfoThI2Mrjt/MzY1LUFKQy0yMjIAAAGhgAY4T=
+uo4db4tLMHtnKUkjWUTwvAZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D" targ=
+et=3D"_blank" id=3D"">https://baito.mynavi.jp/forkigyo/form_list/service_ma=
+_mail/?mail_name=3DEG_ProblemDiscovery</a><br>
+=1B$B!Z7G:\$N$*Ld9g$;![!!=1B(B<a href=3D"http://mail.nalevi.mynavi.jp/dc/ce=
+CChQ7b7NPieVaJol2IhO5H2c1AEhDOefSBTGpgHaPNZSO8VXybnSE_xj_A3OvyvmRfSHG64VO-h=
+y4U4U1aZcAapzdwAL_Evy9Jrkx09oxJMMlv0EP2LC4bicDu_NXS/MzY1LUFKQy0yMjIAAAGhgAY=
+4Tuo4db4tLMHtnKUkjWUTwvAZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D" ta=
+rget=3D"_blank" id=3D"">https://baito.mynavi.jp/forkigyo/form_list/contact_=
+ma_mail/?mail_name=3DEG_ProblemDiscovery</a><br>
+=1B$B!Z%a%k%^%,G[?.Dd;_![!!=1B(B <a href=3D"http://mail.nalevi.mynavi.jp/dc=
+/58Af12AGSmS3vPkvY8KkAVgYRw1eRJCkfuO8oVaGdCeNDorc9jAAV-AMKlD9S2S6TFzzCJIw9t=
+6dHTWpAVMwHyXLSJXEbI577kNPVhtLeV8=3D/MzY1LUFKQy0yMjIAAAGhgAY4Tuo4db4tLMHtnK=
+UkjWUTwvAZqkYAKL405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D" target=3D"_blank"=
+ id=3D"">
+https://lp.nalevi.mynavi.jp/UnsubscribePage.html?mail_name=3DEG_ProblemDisc=
+overy</a><br>
+<br>
+=1B$B%^%$%J%S%P%$%H$K4X$9$k$40U8+$O$3$A$i$+$i=1B(B<br>
+=1B$B!Z$*5RMMBP1~Ak8}![=1B(B0800-601-8193<br>
+=1B$B!Z%a!<%k$G$N$*Ld9g$;![=1B(Bmb-tokyocs@mynavi.jp<br>
+<br>
+--------------------------------------------------</p>
+</div>
+<a href=3D"http://mail.nalevi.mynavi.jp/MzY1LUFKQy0yMjIAAAGhgAY4ThXqw5n_4un=
+v2_fqp15Z1vaEWcOA3n-eib0Fh--JjSmsO6J9OkLWI_2Nu5YuqZ7b8Io=3D"></a><img src=
+=3D"http://mail.nalevi.mynavi.jp/trk?t=3D1&amp;mid=3DMzY1LUFKQy0yMjIAAAGhgA=
+Y4TkUPbdJmdaqy7fI0uyPyhJZWLgY5xvInYzwslQSNO9R11r-o1CHamFFl2Tt7w5iN8AT7kkYk_=
+D7gPwlM4KumnPKJkb-h45gZJpq9S4oPhceOWMpC71yGvmmN4jz7usBE2L8M0GFM7Ba9mNZuju0"=
+ width=3D"1" height=3D"1" alt=3D"" style=3D"display:none!important">
+<p><font face=3D"Verdana" size=3D"1">=1B$B$3$N%a!<%k$O=1B(B a-hasegawa@con-=
+fujiyama.com =1B$B$KAw?.$5$l$^$7$?!#:#8e!"%a!<%k$N<u?.$r4uK>$5$l$J$$>l9g$O!=
+"$3$A$i$+$i=1B(B<a href=3D"http://mail.nalevi.mynavi.jp/dcu/58Af12AGSmS3vPk=
+vY8KkAVgYRw1eRJCkfuO8oVaGdCeNDorc9jAAV-AMKlD9S2S6TFzzCJIw9t6dHTWpAVMwHyXLSJ=
+XEbI577kNPVhtLeV8=3D/MzY1LUFKQy0yMjIAAAGhgAY4Tuo4db4tLMHtnKUkjWUTwvAZqkYAKL=
+405dDqwDD9T8LKDyeU24sgxiFFnyakavmVxf0=3D">=1B$BG[?.Dd;_=1B(B</a>=1B$B$N<jB3=
+$-$r$*4j$$$$$?$7$^$9!#=1B(B
+</font></p>
+</div>
+</body>
+</html>
+
+--_000_9f1abc38c5e546389a762383bc5757c7TYCP301MB0095JPNP301PRO_--
