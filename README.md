@@ -389,6 +389,41 @@ npm run post-slack          # ⑦だけ実行
 - `phone-log-todos.json`（電話連絡由来）
 - `business-events.json`（検討委員会・文化庁協議の実施記録）
 
+### Apple カレンダー（iCal）からの自動取り込み
+
+手編集の代わりに、**macOS の「カレンダー」**または **エクスポートした `.ics`** から `business-events.json` を更新できます。
+
+1. `config/apple-calendar-sync.example.json` を `config/apple-calendar-sync.json` にコピーし、`calendars` に読み取り対象のカレンダー名（カレンダー.appに表示される名前と同一）、`businessNames` に業務ID→正式名称を書きます。
+2. **カレンダー上の予定タイトル**は、次のいずれかで構いません（負荷を減らすなら **A** か **B** がおすすめです）。  
+   - **A（おすすめ）— `calendarFallback`**  
+     `apple-calendar-sync.json` に `"calendarFallback": { "カレンダー名（calendars と一致）": { "businessId": "20260141", "eventType": "bunkacho_consultation" } }` を書くと、そのカレンダー内の予定は **タイトルを自由入力**でよく、業務番号・角括弧は不要です（**1カレンダー＝1業務・1種別**のとき向き）。  
+   - **B — メモ欄にだけ書く**  
+     タイトルは普通の文章でよく、予定の **メモ（説明）の先頭に**次の2行を書きます。  
+     `bid:20260141`（業務ID。**2026始まりなら省略可**: `bid:60141` / `bid:0141` / `bid:141` も `20260141` に展開）  
+     `type:文化庁協議`（`eventTypeMap` にあるキー、または `kickoff_meeting` / `review_committee` / `bunkacho_consultation` をそのまま）  
+     `.ics` 取り込み時はカレンダー名が `ics` になるため、フォールバックは `"calendarFallback": { "ics": { "businessId": "...", "eventType": "..." } }` のようにキー `ics` で指定できます（中身が単一業務に限られる場合向け）。  
+   - **C — 従来どおりタイトルに番号で書く**  
+     `[業務ID][種別キーワード] 表示名`  
+     例: `[20260132][kickoff] 初回打合せ`  
+     種別は `eventTypeMap` にあるキーへマップされます（例: `kickoff` → `kickoff_meeting`、`検討委` → `review_committee`）。
+   - **D — 市町村名・遺跡名 + 区切り + 種別（業務番号なし）**  
+     `titleKeywordSeparator`（既定 `_`）でつなぎ、左側を `titleKeywordAliases`（または `config/todo-report-settings.js` の `BUSINESS_NAME_ALIASES` を `useSettingsKeywordAliases` で併用）に登録したキーワードと照合します。  
+     例: `四條畷市_文化庁協議`、`舟木遺跡_初回打合せ`  
+     開始時刻をタイトルに含める場合は末尾に **`_HHMM`（24時間・4桁）** を足せます。例: `四條畷市_文化庁協議_1300`、`舟木遺跡_初回打合せ_0930`。種別の判定では末尾の `_1300` などは自動ではずれ、`eventTypeMap` には `文化庁協議` / `初回打合せ` 側だけが使われます（カレンダーに表示しているタイトル全文がイベント名として残ります）。**レポートの「開催日時」には、この `_HHMM` を東京の同一日付に反映します**（終日予定で **00:00** と出るのは、内部ではその日の始めの瞬間になっているため。**`_1300` を付けて同期すると開催時刻に置き換わります**。終日に `_HHMM` が無い場合はカレンダー側の開始時刻のままです）。区切りは半角 `_` を推奨（全角 `＿` は同期時に半角へそろえます）。無効な時刻（例 `_2560`）は時刻扱いしません。無効にしたいときは `applyTitleHmToEventDate`: false。
+3. **キックオフの客先資料期限**を別途入れたい場合は、予定の **メモ（説明）の1行目**に  
+   `clientDue:2026-05-20T18:00:00+09:00`  
+   のように書きます（省略可）。
+4. **Mac 上**で `npm run sync-business-events-calendar` を実行すると、Calendar.app から指定期間のイベントを取得し、既存の手動登録（`eventId` が `ical-` で始まらない行）は残したままマージします。
+5. **GitHub Actions（Linux）や Mac を常時オンにしない場合**は Calendar.app が使えません。次のいずれかです。  
+   - **（おすすめ）ICS の URL — `TODO_REPORT_BUSINESS_EVENTS_ICS_URL`**  
+     iCloud／Apple カレンダーで対象カレンダーを **共有（公開URL・購読リンク）** し、発行された `webcal://…` または `https://…` を GitHub Secret に登録します（`webcal://` は実行時に `https://` に読み替えます）。週次ワークフローが **その URL から .ics を取得**して `business-events.json` を更新するため、**Mac がオフでも巡回できます**。  
+   - **リポジトリ内の `.ics`** — 書き出したファイルをコミットし、`TODO_REPORT_BUSINESS_EVENTS_ICS_PATH` でパス指定する。  
+   - **手動 JSON** — Mac で一度 `sync-business-events-calendar` した `data/todo-sources/business-events.json` をコミットする。
+
+初回のみ、**システム設定 → プライバシーとセキュリティ → 自動化** で、ターミナル（または Runner）が「カレンダー」を操作できるように許可が必要な場合があります。
+
+`run-todo-report` 系のパイプラインでは、`build-todo-report-data` の直前に `sync-business-events-calendar` が走ります（設定ファイルが無い場合は何もしません）。
+
 電話連絡は自動取得が難しいため、フォーム入力や定型メモ連携で `phone-log-todos.json` に集約する前提です。
 
 フォーム連携時は、CSV出力を `data/todo-sources/raw-phone-log.csv` と同じヘッダー形式にそろえて取り込みます。  
@@ -464,6 +499,7 @@ GitHub の `Settings -> Secrets and variables -> Actions` で以下を追加し�
 推奨:
 
 - `TODO_REPORT_PHONE_LOG_CSV_URL`（Googleフォーム回答CSVの公開URL）
+- `TODO_REPORT_BUSINESS_EVENTS_ICS_URL`（カレンダーの .ics 購読 URL。Mac オフで GitHub Actions から取り込み可。`config/apple-calendar-sync.json` はリポジトリに含める）
 - `TODO_REPORT_DROPBOX_ACCESS_TOKEN` / `TODO_REPORT_DROPBOX_MEETING_PATH`（打合せ簿を Dropbox から同期する場合。Mac 不要で CI から取得可）
 - `TODO_REPORT_SURGE_DOMAIN`
 - `TODO_REPORT_SURGE_LOGIN`

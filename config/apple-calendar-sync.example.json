@@ -1,0 +1,48 @@
+{
+  "$schema_comment": "コピーして config/apple-calendar-sync.json として保存し、カレンダー名・業務名を編集してください。",
+  "calendars": [
+    "業務Todoレポート"
+  ],
+  "lookBackDays": 30,
+  "lookAheadDays": 120,
+  "businessIdYearPrefix": "2026",
+  "titleKeywordSeparator": "_",
+  "useSettingsKeywordAliases": true,
+  "titleKeywordAliases": [
+    {
+      "keyword": "四條畷市",
+      "businessId": "20260141",
+      "businessName": "四條畷市文化財保存活用地域計画策定支援業務委託（２年目）"
+    },
+    {
+      "keyword": "舟木遺跡",
+      "businessId": "20260140",
+      "businessName": "史跡舟木遺跡整備基本計画策定支援業務（２年目）"
+    }
+  ],
+  "titlePattern": "^\\[(\\d{3,8})\\]\\s*\\[([^\\]]+)\\]\\s*(.*)$",
+  "titlePatternFlags": "",
+  "eventTypeMap": {
+    "kickoff": "kickoff_meeting",
+    "キックオフ": "kickoff_meeting",
+    "ko": "kickoff_meeting",
+    "初回打合せ": "kickoff_meeting",
+    "検討委": "review_committee",
+    "review": "review_committee",
+    "検討": "review_committee",
+    "文化庁": "bunkacho_consultation",
+    "文化庁協議": "bunkacho_consultation",
+    "bunkacho": "bunkacho_consultation",
+    "庁協": "bunkacho_consultation"
+  },
+  "businessNames": {
+    "20250504": "令和８年度名勝地総合調査業務委託",
+    "20260132": "日高市文化財保存活用地域計画作成支援業務"
+  },
+  "calendarFallback": {
+    "業務Todoレポート": {
+      "businessId": "20260141",
+      "eventType": "bunkacho_consultation"
+    }
+  }
+}

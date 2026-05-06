@@ -27,13 +27,15 @@
     "dropbox-list-folder": "node scripts/dropbox-list-folder.js",
     "dropbox-discover": "node scripts/dropbox-discover.js",
     "import-phone-log": "node scripts/import-phone-log-csv.js",
+    "sync-business-events-calendar": "node scripts/sync-business-events-from-calendar.js",
     "generate-todo-report": "node scripts/generate-todo-report.js",
+    "screenshot-todo-report": "node scripts/screenshot-todo-report.js",
     "deploy-todo-report": "node scripts/deploy-todo-report.js",
-    "publish-todo-report-html": "npm run sync-phone-log && npm run import-phone-log && npm run sync-meeting-docs-dropbox && npm run fetch-todo-mails:imap && npm run analyze-todo-sources && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report",
+    "publish-todo-report-html": "npm run sync-phone-log && npm run import-phone-log && npm run sync-meeting-docs-dropbox && npm run fetch-todo-mails:imap && npm run analyze-todo-sources && npm run sync-business-events-calendar && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report",
     "send-todo-report-email": "node scripts/send-todo-report-email.js",
     "send-todo-report-email:dry-run": "DRY_RUN=1 node scripts/send-todo-report-email.js",
-    "run-todo-report": "npm run check-todo-report-setup && npm run sync-phone-log && npm run import-phone-log && npm run sync-meeting-docs-dropbox && npm run fetch-todo-mails:imap && npm run analyze-todo-sources && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report && npm run send-todo-report-email",
-    "run-todo-report:preview": "npm run check-todo-report-setup:preview && npm run sync-phone-log && npm run import-phone-log && npm run sync-meeting-docs-dropbox && npm run fetch-todo-mails:imap && npm run analyze-todo-sources && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report && npm run send-todo-report-email:dry-run"
+    "run-todo-report": "npm run check-todo-report-setup && npm run sync-phone-log && npm run import-phone-log && npm run sync-meeting-docs-dropbox && npm run fetch-todo-mails:imap && npm run analyze-todo-sources && npm run sync-business-events-calendar && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report && npm run send-todo-report-email",
+    "run-todo-report:preview": "npm run check-todo-report-setup:preview && npm run sync-phone-log && npm run import-phone-log && npm run sync-meeting-docs-dropbox && npm run fetch-todo-mails:imap && npm run analyze-todo-sources && npm run sync-business-events-calendar && npm run build-todo-report-data && npm run generate-todo-report && npm run deploy-todo-report && npm run send-todo-report-email:dry-run"
   },
   "keywords": [
     "dashboard",
@@ -49,6 +51,7 @@
     "@google/generative-ai": "^0.24.1",
     "@slack/web-api": "^7.0.0",
     "dotenv": "^17.2.3",
+    "ical.js": "^2.2.1",
     "imapflow": "^1.3.2",
     "js-yaml": "^4.1.0",
     "mailparser": "^3.9.8",
