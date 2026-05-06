@@ -29,7 +29,7 @@
 
 ## Dropbox から打合せ簿を同期（オプション）
 
-GitHub Actions やローカルで **Mac を開かずに**打合せ簿を取り込むには、Dropbox API のアクセストークンとフォルダパスを設定します。
+GitHub Actions やローカルで **Mac を開かずに**打合せ簿を取り込むには、Dropbox API の認証情報とフォルダパスを設定します。
 
 ```bash
 npm run sync-meeting-docs-dropbox
@@ -37,13 +37,14 @@ npm run sync-meeting-docs-dropbox
 
 環境変数:
 
-- `TODO_REPORT_DROPBOX_ACCESS_TOKEN` … Dropbox アプリで発行したトークン
 - `TODO_REPORT_DROPBOX_MEETING_PATH` … 同期元フォルダ（例: `/業務/打合せ完成`）
+- `TODO_REPORT_DROPBOX_APP_KEY` / `TODO_REPORT_DROPBOX_APP_SECRET` / `TODO_REPORT_DROPBOX_REFRESH_TOKEN` … 推奨（毎回 access token を再取得）
+- `TODO_REPORT_DROPBOX_ACCESS_TOKEN` … 従来方式（固定 token。期限切れ時は更新が必要）
 - `TODO_REPORT_MEETING_INPUT_DIR` … 省略時は `data/todo-input/meeting-docs`
 
 取得する拡張子は `.docx` / `.pdf` / `.txt` / `.md` のみ（解析できないスキャンPDFは従来どおり避けてください）。
 
-`run-todo-report` の前段で自動実行されます。トークン未設定時はスキップし、リポジトリ内の `meeting-docs` のみで解析します。
+`run-todo-report` の前段で自動実行されます。認証情報未設定時はスキップし、リポジトリ内の `meeting-docs` のみで解析します。
 
 ## 受信箱の直接巡回（IMAP）
 

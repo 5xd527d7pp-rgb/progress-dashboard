@@ -6,7 +6,9 @@
  * CI（GitHub Actions）でも Mac なしで動かせる。
  *
  * 環境変数:
- * - TODO_REPORT_DROPBOX_ACCESS_TOKEN … Dropbox で発行したアクセストークン
+ * - TODO_REPORT_DROPBOX_ACCESS_TOKEN … Dropbox で発行したアクセストークン（従来方式）
+ * - TODO_REPORT_DROPBOX_APP_KEY / TODO_REPORT_DROPBOX_APP_SECRET / TODO_REPORT_DROPBOX_REFRESH_TOKEN
+ *   … refresh token から毎回 access token を再取得（推奨）
  * - TODO_REPORT_DROPBOX_MEETING_PATH … Dropbox 上のフォルダパス（例: /業務/打合せ完成）
  * - TODO_REPORT_MEETING_INPUT_DIR … 保存先（未設定時は data/todo-input/meeting-docs）
  *
@@ -130,6 +132,51 @@ async function downloadFile(token, dropboxPathLower, destFsPath, pathRootHeader)
   await fs.writeFile(destFsPath, buf);
 }
 
+function getDropboxAuthEnv() {
+  return {
+    accessToken: process.env.TODO_REPORT_DROPBOX_ACCESS_TOKEN?.trim() || '',
+    appKey: process.env.TODO_REPORT_DROPBOX_APP_KEY?.trim() || '',
+    appSecret: process.env.TODO_REPORT_DROPBOX_APP_SECRET?.trim() || '',
+    refreshToken: process.env.TODO_REPORT_DROPBOX_REFRESH_TOKEN?.trim() || ''
+  };
+}
+
+async function refreshDropboxAccessToken(appKey, appSecret, refreshToken) {
+  const body = new URLSearchParams({
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken,
+    client_id: appKey,
+    client_secret: appSecret
+  });
+  const res = await fetch('https://api.dropboxapi.com/oauth2/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: body.toString()
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    throw new Error(`dropbox oauth2/token: ${res.status} ${text}`);
+  }
+  const data = JSON.parse(text);
+  const token = String(data.access_token || '').trim();
+  if (!token) {
+    throw new Error('dropbox oauth2/token: access_token が取得できませんでした');
+  }
+  return token;
+}
+
+async function resolveDropboxAccessToken() {
+  const { accessToken, appKey, appSecret, refreshToken } = getDropboxAuthEnv();
+  if (appKey && appSecret && refreshToken) {
+    const token = await refreshDropboxAccessToken(appKey, appSecret, refreshToken);
+    console.log('🔐 Dropbox access token を refresh token から再取得しました');
+    return token;
+  }
+  return accessToken;
+}
+
 /** folderPrefixLower は path_lower 形式（先頭 /、末尾スラッシュなし） */
 function relativePathBelowFolder(folderPrefixLower, filePathLower) {
   const prefix =
@@ -158,15 +205,19 @@ function safeFsSegments(relPosix) {
 }
 
 export async function syncMeetingDocsFromDropbox() {
-  const token = process.env.TODO_REPORT_DROPBOX_ACCESS_TOKEN || '';
   const folderRaw = process.env.TODO_REPORT_DROPBOX_MEETING_PATH || '';
+  const auth = getDropboxAuthEnv();
 
-  if (!token.trim() || !folderRaw.trim()) {
+  const hasStaticToken = Boolean(auth.accessToken);
+  const hasRefreshSet = Boolean(auth.appKey && auth.appSecret && auth.refreshToken);
+  const hasAuth = hasStaticToken || hasRefreshSet;
+  if (!hasAuth || !folderRaw.trim()) {
     console.log(
-      'ℹ️ Dropbox 打合せ簿同期をスキップ（TODO_REPORT_DROPBOX_ACCESS_TOKEN と TODO_REPORT_DROPBOX_MEETING_PATH を設定すると有効）'
+      'ℹ️ Dropbox 打合せ簿同期をスキップ（TODO_REPORT_DROPBOX_MEETING_PATH と、TODO_REPORT_DROPBOX_ACCESS_TOKEN または TODO_REPORT_DROPBOX_APP_KEY/APP_SECRET/REFRESH_TOKEN を設定すると有効）'
     );
     return false;
   }
+  const token = await resolveDropboxAccessToken();
 
   const meetingRoot = normalizeDropboxFolderPath(folderRaw);
   const listPath = toListFolderApiPath(meetingRoot);

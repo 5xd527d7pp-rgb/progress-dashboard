@@ -92,12 +92,16 @@ async function validateTodoReportSetup() {
     warnings.push('電話CSVはURL同期されません（raw-phone-log.csv のローカル内容を使用）');
   }
 
-  if (
-    !process.env.TODO_REPORT_DROPBOX_ACCESS_TOKEN ||
-    !process.env.TODO_REPORT_DROPBOX_MEETING_PATH
-  ) {
+  const hasDropboxStaticToken = Boolean(process.env.TODO_REPORT_DROPBOX_ACCESS_TOKEN);
+  const hasDropboxRefreshSet =
+    Boolean(process.env.TODO_REPORT_DROPBOX_APP_KEY) &&
+    Boolean(process.env.TODO_REPORT_DROPBOX_APP_SECRET) &&
+    Boolean(process.env.TODO_REPORT_DROPBOX_REFRESH_TOKEN);
+  const hasDropboxAuth = hasDropboxStaticToken || hasDropboxRefreshSet;
+
+  if (!hasDropboxAuth || !process.env.TODO_REPORT_DROPBOX_MEETING_PATH) {
     warnings.push(
-      'Dropbox 打合せ簿は同期されません（TODO_REPORT_DROPBOX_* 未設定。リポジトリ同梱の meeting-docs のみ）'
+      'Dropbox 打合せ簿は同期されません（TODO_REPORT_DROPBOX_MEETING_PATH と、TODO_REPORT_DROPBOX_ACCESS_TOKEN または TODO_REPORT_DROPBOX_APP_KEY/APP_SECRET/REFRESH_TOKEN を設定）'
     );
   }
 
